@@ -1,4 +1,5 @@
 import P5 from "p5"
+//comentário
 
 const sketch = (p: P5) => {
   p.setup = () => {
