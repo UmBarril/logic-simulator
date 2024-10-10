@@ -1,5 +1,5 @@
 import P5 from 'p5'
-import { Drawable } from '../interfaces/drawable'
+import { Drawable } from '../../interfaces/drawable'
 
 // canvas tem que estar no modo webgl para isso funcionar
 export class CoolSpiningText implements Drawable {

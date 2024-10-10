@@ -1,5 +1,5 @@
 import P5 from "p5";
-import { Drawable } from "../interfaces/drawable";
+import { Drawable } from "../../interfaces/drawable";
 
 export class Rectangle implements Drawable {
     _isDragging: boolean = false

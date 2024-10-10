@@ -3,7 +3,6 @@ import { Drawable } from "./interfaces/drawable"
 import { LogicGate } from "./materials/logicgate"
 import { OutputButton } from "./materials/outputcircle"
 import { Clickable } from "./interfaces/clickable"
-import { RotatingTitle } from "./materials/title"
 import { canvaPosToWebglPos, randomPos } from "./util/util"
 
 const sketch = (p: P5) => {
@@ -19,7 +18,6 @@ const sketch = (p: P5) => {
 
     drawableElements.push(ob)
     drawableElements.push(new LogicGate(p, "test", randomPos(p)))
-    drawableElements.push(new RotatingTitle("Teste", p.createVector(0, 0)))
 
     clickableElements.push(ob)
 
