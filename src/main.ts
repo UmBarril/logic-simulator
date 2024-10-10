@@ -73,13 +73,17 @@ const sketch = (p: P5) => {
     p.background(53)
 
     drawableElements.forEach(o => {
+      p.push()
       o.draw(p)
+      p.pop()
     });
 
-    p.strokeWeight(0)
-    p.rotateY(p.frameCount * 0.01);
-    p.texture(_text);
-    p.plane(400,300);
+    p.push()
+      p.strokeWeight(0)
+      p.rotateY(p.frameCount * 0.01);
+      p.texture(_text);
+      p.plane(400,300);
+    p.pop()
   }
 }
 

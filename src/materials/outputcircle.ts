@@ -91,9 +91,11 @@ export class OutputButton implements Drawable, Clickable, KeyboardListener {
                 this.draggingX = this.pos.x - this.dragPadWidth / 2
                 this.draggingY = this.pos.y + this.dragPadDistance
                 
+                p.push()
                 p.noStroke()
                 p.fill(255, 255, 255) // branco
                 p.rect(this.draggingX, this.draggingY, this.dragPadWidth, this.dragPadHeight)
+                p.pop()
 
                 // Pad de conexão 
                 // posição do canto superior esquedo do pad 
@@ -101,14 +103,18 @@ export class OutputButton implements Drawable, Clickable, KeyboardListener {
                 this.padY = this.pos.y - this.padDistance - this.padSize
 
                 // Ponte entre o botão e o pad de conexão
+                p.push()
                 p.stroke(255, 5, 100)
                 p.strokeWeight(10)
                 p.line(this.pos.x, this.pos.y, this.padX + this.padSize / 2, this.padY + this.padSize / 2)
+                p.pop()
 
                 // O próprio pad de conexão
+                p.push()
                 p.noStroke()
                 p.fill(255, 255, 255) // branco
                 p.rect(this.padX, this.padY, this.padSize, this.padSize)
+                p.pop()
 
                 break
             case Directions.RIGHT:
@@ -121,14 +127,17 @@ export class OutputButton implements Drawable, Clickable, KeyboardListener {
         }
 
         // Botão de ligar e desligar  
+        p.push()
         if (this.isEnabled){
             p.fill(255, 255, 0)
         } else {  
             p.fill(255, 0, 255)
         }
         p.ellipse(this.pos.x, this.pos.y, this.buttonRad*2)
-        
+        p.pop()
+
         // Linha (caso esteja sendo arrastada)
+        p.push()
         if (this.isDraggingLine){
             p.stroke(255)
             p.strokeWeight(10)
