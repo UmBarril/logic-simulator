@@ -4,24 +4,7 @@ import { LogicGate } from "./materials/logicgate"
 import { OutputButton } from "./materials/outputcircle"
 import { Clickable } from "./interfaces/clickable"
 import { RotatingTitle } from "./materials/title"
-import { canvaPosToWebglPos } from "./util/util"
-
-/**
- * Configura o texto para ser desenhado (não funciona sem fazer isso)
- * @param p p5 instance
- */
-function setupText(p: P5) {
-    p.textFont('Arial');
-    p.textSize(32);
-    p.textAlign(p.CENTER, p.CENTER);
-}
-
-function randomPos(p: P5): P5.Vector {
-    // levando em conta que as coordenadas do webgl começam no centro (0,0)
-    let width = { min: -p.width/2, max: p.width/2 }
-    let height = { min: -p.height/2, max: p.height/2 }
-    return p.createVector(p.random(width.min, width.max), p.random(height.min, height.max))
-}
+import { canvaPosToWebglPos, randomPos } from "./util/util"
 
 const sketch = (p: P5) => {
   let drawableElements: Drawable[] = []
@@ -31,7 +14,6 @@ const sketch = (p: P5) => {
 
   p.setup = () => {
     p.createCanvas(800, 600, p.WEBGL) 
-    setupText(p)
 
     let ob = new OutputButton(randomPos(p))
 
@@ -70,11 +52,22 @@ const sketch = (p: P5) => {
   //     cam._orbit(0, 0, -sensitivityZ * scaleFactor);
   //   }
   // }
-
   
   p.mouseClicked = (e: MouseEvent) => {
     clickableElements.forEach(c => {
       c.click(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY))
+    });
+  }
+
+  p.mousePressed = (e: MouseEvent) => {
+    clickableElements.forEach(c => {
+      c.pressed(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY))
+    });
+  }
+
+  p.mouseReleased = (e: MouseEvent) => {
+    clickableElements.forEach(c => {
+      c.released(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY))
     });
   }
 
