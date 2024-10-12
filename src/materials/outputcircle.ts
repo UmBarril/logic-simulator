@@ -4,6 +4,7 @@ import { Clickable } from "../interfaces/clickable";
 import { Directions } from "../util/direction";
 import { canvaPosToWebglPos } from "../util/util";
 import { KeyboardListener } from "../interfaces/keyboardlistener";
+import { rotateKey as rotateClockWiseKey } from "../util/settings";
 
 /**
  * Essa classe representa um botão de saída de um circuito lógico.
@@ -27,22 +28,42 @@ export class OutputButton implements Drawable, Clickable, KeyboardListener {
     readonly dragPadWidth = 30;
     readonly dragPadHeight = 12;
 
-    pos: P5.Vector;
-
     padX: number = 0
     padY: number = 0
     draggingX: number = 0
     draggingY: number = 0
 
-    constructor(pos: P5.Vector) {
-        this.pos = pos;
+    constructor(public pos: P5.Vector) {
         // Direção padrão
         // this.changeDirection(Directions.UP)
     }
 
     // keyboardlistener interface
+    keyReleased(p: P5, key: string): void {
+        // TODO
+    }
+
+    // keyboardlistener interface
     keyPressed(p: P5, key: string): void {
-        throw new Error("Method not implemented.");
+        if (
+            key == rotateClockWiseKey &&
+            this.isMoving
+        ) {
+            switch (this.currentDirection){
+                case Directions.UP:
+                    this.currentDirection = Directions.RIGHT
+                    break
+                case Directions.RIGHT:
+                    this.currentDirection = Directions.DOWN
+                    break
+                case Directions.DOWN:
+                    this.currentDirection = Directions.LEFT
+                    break
+                case Directions.LEFT:
+                    this.currentDirection = Directions.UP
+                    break
+            }
+        }
     }
     
     // clickable interface
@@ -64,13 +85,11 @@ export class OutputButton implements Drawable, Clickable, KeyboardListener {
 
     // clickable interface
     click(p: P5, pos: P5.Vector): void {
+
         // Botão de ligar e desligar
         let dis = P5.Vector.dist(this.pos, pos);
-        console.log("x = " + pos.x + " y = " + pos.y);
-        console.log(dis);
         if (dis < this.buttonRad) {
            this.isEnabled = !this.isEnabled ;
-           console.log("foi");
         } 
 
         // Pad de conexão TODO
@@ -118,10 +137,69 @@ export class OutputButton implements Drawable, Clickable, KeyboardListener {
 
                 break
             case Directions.RIGHT:
+                // Dragging
+                console.log(this.pos.x)
+                this.draggingX = this.pos.x - this.dragPadDistance - (this.dragPadWidth / 2)
+                console.log(this.draggingX)
+                this.draggingY = this.pos.y - this.dragPadWidth / 2                
+
+                p.push()
+                p.noStroke()
+                p.fill(255, 255, 255) // branco
+                p.rect(this.draggingX, this.draggingY, this.dragPadHeight, this.dragPadWidth)
+                p.pop()
+
+                // Pad de conexão 
+                // posição do canto superior esquedo do pad 
+                this.padX = this.pos.x + this.padDistance + this.padSize
+                this.padY = this.pos.y - (this.buttonRad / 2)
+
+                // Ponte entre o botão e o pad de conexão
+                p.push()
+                p.stroke(255, 5, 100)
+                p.strokeWeight(10)
+                p.line(this.pos.x, this.pos.y, this.padX + this.padSize / 2, this.padY + this.padSize / 2)
+                p.pop()
+
+                // O próprio pad de conexão
+                p.push()
+                p.noStroke()
+                p.fill(255, 255, 255) // branco
+                p.rect(this.padX, this.padY, this.padSize, this.padSize)
+                p.pop()
 
                 break;
             case Directions.DOWN:
-                break;
+                // Dragging
+                this.draggingX = this.pos.x - this.dragPadWidth / 2
+                this.draggingY = this.pos.y - this.dragPadDistance
+                
+                p.push()
+                p.noStroke()
+                p.fill(255, 255, 255) // branco
+                p.rect(this.draggingX, this.draggingY, this.dragPadWidth, this.dragPadHeight)
+                p.pop()
+
+                // Pad de conexão 
+                // posição do canto superior esquedo do pad 
+                this.padX = this.pos.x - (this.buttonRad / 2)
+                this.padY = this.pos.y + this.padDistance + this.padSize
+
+                // Ponte entre o botão e o pad de conexão
+                p.push()
+                p.stroke(255, 5, 100)
+                p.strokeWeight(10)
+                p.line(this.pos.x, this.pos.y, this.padX + this.padSize / 2, this.padY - this.padSize / 2)
+                p.pop()
+
+                // O próprio pad de conexão
+                p.push()
+                p.noStroke()
+                p.fill(255, 255, 255) // branco
+                p.rect(this.padX, this.padY, this.padSize, this.padSize)
+                p.pop()
+
+                break
             case Directions.LEFT:
                 break;
         }

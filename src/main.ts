@@ -1,6 +1,8 @@
 import P5 from "p5"
 import { Drawable } from "./interfaces/drawable"
-import { LogicGate } from "./materials/logicgate"
+import { CircuitDrawable } from "./materials/drawablecircuit"
+import { KeyboardListener } from "./interfaces/keyboardlistener"
+import { Circuit } from "./logic/circuit"
 import { OutputButton } from "./materials/outputcircle"
 import { Clickable } from "./interfaces/clickable"
 import { canvaPosToWebglPos, randomPos } from "./util/util"
@@ -9,7 +11,7 @@ import { RotatingTitle } from "./materials/random/rotatingtitle"
 const sketch = (p: P5) => {
   let drawableElements: Drawable[] = []
   let clickableElements: Clickable[] = []
-  let _text: P5.Graphics;
+  let keyboardListeners: KeyboardListener[] = []
   let cam: P5.Camera;
 
   p.setup = () => {
@@ -25,6 +27,7 @@ const sketch = (p: P5) => {
     )
 
     clickableElements.push(ob)
+    keyboardListeners.push(ob)
 
     // camera e zoom
     cam = p.createCamera();
@@ -47,6 +50,18 @@ const sketch = (p: P5) => {
   //     cam._orbit(0, 0, -sensitivityZ * scaleFactor);
   //   }
   // }
+  
+  // p.doubleClicked = (e: MouseEvent) => { } 
+
+  p.keyPressed = (e: KeyboardEvent) => {
+    keyboardListeners.forEach(k => {
+      k.keyPressed(p, e.key)
+    });
+  }
+  
+  p.keyReleased = (e: KeyboardEvent) => {
+
+  }
   
   p.mouseClicked = (e: MouseEvent) => {
     clickableElements.forEach(c => {
