@@ -4,6 +4,7 @@ import { LogicGate } from "./materials/logicgate"
 import { OutputButton } from "./materials/outputcircle"
 import { Clickable } from "./interfaces/clickable"
 import { canvaPosToWebglPos, randomPos } from "./util/util"
+import { RotatingTitle } from "./materials/random/rotatingtitle"
 
 const sketch = (p: P5) => {
   let drawableElements: Drawable[] = []
@@ -17,22 +18,18 @@ const sketch = (p: P5) => {
     let ob = new OutputButton(randomPos(p))
 
     drawableElements.push(ob)
-    drawableElements.push(new LogicGate(p, "test", randomPos(p)))
+
+    let title = 'logic simulator v0.1'
+    drawableElements.push(
+      new RotatingTitle(p, p.createVector(-p.width / 2 + 85, -p.height / 2 + 100), title, true)
+    )
 
     clickableElements.push(ob)
 
     // camera e zoom
     cam = p.createCamera();
 
-    // isso tem que ser definido no setup
-    _text = p.createGraphics(400,300);
-    _text.clear()
-    _text.fill(0);
-    _text.textAlign(p.CENTER);
-    _text.textSize(50);
-    _text.text('paulo palhano', 200, 150);
-
-    p.describe('p5.js is cool!');
+    // p.describe('p5.js is cool!');
   }
 
   // TODO: reimplementar sem usar a api não documentada
@@ -77,13 +74,6 @@ const sketch = (p: P5) => {
       o.draw(p)
       p.pop()
     });
-
-    p.push()
-      p.strokeWeight(0)
-      p.rotateY(p.frameCount * 0.01);
-      p.texture(_text);
-      p.plane(400,300);
-    p.pop()
   }
 }
 
