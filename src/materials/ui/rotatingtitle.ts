@@ -22,7 +22,6 @@ export class RotatingTitle extends Material {
         p.push()
 
         p.translate(P5.Vector.add(this.pos, this.pointOfOrigin)); 
-
         p.strokeWeight(0)
 
         // lógica para inverter o texto quando ele estiver do lado errado

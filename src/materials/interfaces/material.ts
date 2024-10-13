@@ -6,6 +6,7 @@ import { Modifiers } from "../modifiers";
 // TODO: fazer uma interface para facilitar rotacao
 export abstract class Material implements Drawable, Clickable {
 
+    private isEnabled: boolean = true
     private _pointOfOrigin: P5.Vector = new P5.Vector(0, 0)
     private _children: Material[] = []
 
@@ -14,7 +15,17 @@ export abstract class Material implements Drawable, Clickable {
         private _modifiers: Modifiers<any> = new Modifiers<any>()
     ){ }
 
+    /**
+     * Função chamada constantemente para desenhar o material.
+     * @param p Instância do P5
+     */
     abstract draw(p: P5): void
+
+    /**
+     * Usado para verificar se o ponto está dentro do material.
+     * Funções de clique e pressionar são chamadas apenas se o ponto estiver dentro do material.
+     * @param pos Posição do ponto a ser verificado.
+     */
     abstract isInside(pos: P5.Vector): boolean
 
     public get children() {
