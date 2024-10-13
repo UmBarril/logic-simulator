@@ -1,91 +1,95 @@
-import P5 from "p5"
-import { canvaPosToWebglPos, randomPos } from "./util/util"
+import P5  from "p5"
+import { getMousePos } from "./util/util"
 import { RotatingTitle } from "./materials/ui/rotatingtitle"
 import { Material } from "./materials/interfaces/material"
-import { Circle } from "./materials/shapes/circle"
-import { Modifiers } from "./materials/modifiers"
-import { OutputMaterial } from "./materials/circuits/outputmaterial"
-import { SceneManager } from "./scenemgr"
+import { MaterialManager as MaterialManager } from "./materialmgr"
+import { Workspace } from "./workspace"
+import { TestingWorkspace } from "./examples/testing"
 
 const sketch = (p: P5) => {
-  // let cam: P5.Camera;
+
+  let width = p.windowWidth
+  let height = p.windowHeight
+
+  let cam: P5.Camera // TEM que ser definido no setup
+  let ui: P5.Graphics
 
   p.setup = () => {
-    SceneManager.initialise()
-    p.createCanvas(800, 600, p.WEBGL) 
+    MaterialManager.initialize()
+    p.createCanvas(width, height, p.WEBGL) 
 
-    let circle = new Circle(
-      p.createVector(0, 0),
-      30,
-      p.color(255, 0, 0),
-      new Modifiers<Circle>().addOnClick((m) => {
-        m.pos = randomPos(p)
-        return false
-      })
-    )
-    SceneManager.currentScene.add(circle)
+    ui = p.createGraphics(width, height, p.WEBGL)
 
-    let om = new OutputMaterial(p, randomPos(p))
-    SceneManager.currentScene.add(om)
+    cam = p.createCamera();
+    p.setCamera(cam)
 
-    // cam = p.createCamera();
+    // TODO: fazer algum tipo de menu para selecionar isso OU 
+    // fazer um sistema para carregar automaticamente pelos argumentos na url
 
-    let title = 'logic simulator v0.1'
-    let titleMaterial = new RotatingTitle(p, p.createVector(-p.width / 2 + 85, -p.height / 2 + 100), title, true)
-    // titleMaterial.setCamera(cam)
-    SceneManager.currentScene.add(titleMaterial)
+    let workspace: Workspace = new TestingWorkspace()
+    workspace.getMaterials(p).forEach(m => MaterialManager.current.add(m))
 
-    // camera e zoom
-    // cam = p.createCamera();
+    setupUI()
 
-    // p.describe('p5.js is cool!');
+    p.describe('p5.js');
+  }
+
+  p.windowResized = () => {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
+    ui.resizeCanvas(p.windowWidth, p.windowHeight);
+    MaterialManager.current.updateUiPostions()
   }
 
   // TODO: reimplementar sem usar a api não documentada
-  // p.mouseWheel = (e: MouseEvent) => {
-  //   const sensitivityZ = 0.001;
-  //   const scaleFactor = 100;
+  p.mouseWheel = (e: MouseEvent) => {
+    const sensitivityZ = 0.001;
+    const scaleFactor = 100;
 
-  //   // @ts-ignore
-  //   if (e.delta > 0) {
-  //     // usando a api _orbit não documentada segundo https://stackoverflow.com/questions/68986225/orbitcontrol-in-creategraphics-webgl-on-a-2d-canvas
-  //     // @ts-ignore
-  //     cam._orbit(0, 0, sensitivityZ * scaleFactor);
-  //   } else {
-  //     // @ts-ignore
-  //     cam._orbit(0, 0, -sensitivityZ * scaleFactor);
-  //   }
-  // }
+    // @ts-ignore
+    if (e.delta > 0) {
+      // usando a api _orbit não documentada segundo https://stackoverflow.com/questions/68986225/orbitcontrol-in-creategraphics-webgl-on-a-2d-canvas
+      // @ts-ignore
+      cam._orbit(0, 0, sensitivityZ * scaleFactor);
+    } else {
+      // @ts-ignore
+      cam._orbit(0, 0, -sensitivityZ * scaleFactor);
+    }
+  }
   
-  // p.doubleClicked = (e: MouseEvent) => { } 
+  p.doubleClicked = (e: MouseEvent) => { } 
 
   p.keyPressed = (e: KeyboardEvent) => {
-    SceneManager.currentScene.getAllKeyboardListeners().forEach(k => {
+    MaterialManager.current.getAllKeyboardListeners().forEach(k => {
       k.keyPressed(p, e.key)
     });
   }
   
   p.keyReleased = (e: KeyboardEvent) => {
-    SceneManager.currentScene.getAllKeyboardListeners().forEach(k => {
+    MaterialManager.current.getAllKeyboardListeners().forEach(k => {
       k.keyReleased(p, e.key)
     });
   }
 
   p.mouseClicked = (_: MouseEvent) => {
-    SceneManager.currentScene.getAllClickableMaterials().forEach(handleClick);
+    console.log("mouse.x" + getMousePos(p).x)
+    console.log("cam.centerX" + cam.upZ)
+
+    MaterialManager.current.getAllClickableMaterials().forEach(handleClick);
   }
 
   p.mousePressed = (_: MouseEvent) => {
-    SceneManager.currentScene.getAllClickableMaterials().forEach(handlePressed);
+    MaterialManager.current.getAllClickableMaterials().forEach(handlePressed);
   }
 
   p.mouseReleased = (_: MouseEvent) => {
-    SceneManager.currentScene.getAllClickableMaterials().forEach(handleReleased);
+    MaterialManager.current.getAllClickableMaterials().forEach(handleReleased);
   }
 
   p.draw = () => {
     p.background(53)
-    SceneManager.currentScene.getAllMaterials().forEach(handleDraw);
+    
+    MaterialManager.current.getAllUIMaterials().forEach(handleDrawUI);
+    MaterialManager.current.getAllWorkspaceMaterials().forEach(handleDraw);
   }
 
   // se um filho foi clicado, ignorar clique no pai
@@ -128,6 +132,29 @@ const sketch = (p: P5) => {
     m.draw(p)
     p.pop()
   }
+
+  function handleDrawUI(m: Material) {
+    m.children.forEach(c => {  
+      c.pointOfOrigin = m.pos
+      handleDraw(c)
+    })
+    ui.push()
+    m.draw(p)
+    ui.pop()
+  }
+
+  function setupUI() {
+      let title = 'logic simulator v0.1'
+
+      let titleMaterial = new RotatingTitle(
+        p, 
+        p.createVector(-p.width / 2 + 85, -p.height / 2 + 100), // posição
+        title, // texto
+        true // rainbowMode
+      )
+      MaterialManager.current.add(titleMaterial, true)
+  }
 }
 
 new P5(sketch)
+
