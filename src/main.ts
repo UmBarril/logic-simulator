@@ -100,7 +100,7 @@ const sketch = (p: P5) => {
        return ignore
     }
 
-    return m.click(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY)) 
+    return m.click(p, getMousePos(p)) 
   }
 
   function handlePressed(m: Material) {
@@ -108,7 +108,7 @@ const sketch = (p: P5) => {
       handlePressed(c)
     })
 
-    m.pressed(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY))
+    m.pressed(p, getMousePos(p))
   }
 
   function handleReleased(m: Material) {
@@ -116,7 +116,7 @@ const sketch = (p: P5) => {
       handleReleased(c)
     })
 
-    m.released(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY))
+    m.released(p, getMousePos(p))
   }
 
   function handleDraw(m: Material) {

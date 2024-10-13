@@ -9,6 +9,11 @@ export function canvaPosToWebglPos(p: P5, x: number, y: number): P5.Vector {
     return p.createVector(x - p.width/2, y - p.height/2)
 }
 
+// Posição do mouse no mundo
+export function getMousePos(p: P5): P5.Vector {
+    return canvaPosToWebglPos(p, p.mouseX, p.mouseY)
+}
+
 /**
  * Retorna uma posição aleatória no mundo (webgl)
  * @param p P5 instance

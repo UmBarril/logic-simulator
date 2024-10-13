@@ -1,7 +1,7 @@
 import P5 from "p5";
 import { Material } from "../interfaces/material";
 import { Modifiers } from "../modifiers";
-import { canvaPosToWebglPos } from "../../util/util";
+import { getMousePos } from "../../util/util";
 
 export class Rectangle extends Material {
     private _dragging = false
@@ -20,7 +20,7 @@ export class Rectangle extends Material {
 
         p.translate(0,0,this.modifiers.zIndex)
         if (this._dragging && this.modifiers.onMousePressed != null){
-            this.modifiers.onMousePressed(this, canvaPosToWebglPos(p, p.mouseX, p.mouseY))
+            this.modifiers.onMousePressed(this, getMousePos(p))
         }
 
         p.fill(255, 255,0)

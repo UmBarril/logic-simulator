@@ -6,7 +6,7 @@ export class Circle extends Material {
     constructor(
         pos: P5.Vector,
         private rad: number = 20,
-        private color: P5.Color,
+        private color: P5.Color, // eu quero por uma cor padrão.. mas eu preciso de um p5 para isso
         modifiers: Modifiers<Circle> = new Modifiers()
     ){
         super(pos, modifiers)
