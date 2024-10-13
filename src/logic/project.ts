@@ -13,5 +13,39 @@ import { Circuit } from './circuit';
 export class Project {
 
     circuits: Circuit[] = []
+    currentCircuit: Circuit | null = null
 
+    constructor(public name: string) { }
+
+    /**
+     * Adiciona um circuito ao projeto.
+     * @param circuit 
+     */
+    addCircuit(circuit: Circuit) {
+        this.circuits.push(circuit) 
+    }
+
+    /**
+     * Define o circuito atual.
+     * @param circuit 
+     */
+    setCurrentCircuit(circuit: Circuit) {
+        this.currentCircuit = circuit
+    }
+
+    /**
+     * Salva o projeto.
+     * @todo Implementar
+     */
+    save() {
+        // TODO
+    }
+
+    /**
+     * Carrega o projeto.
+     * @todo Implementar
+     */
+    load() {
+        // TODO
+    }
 }
