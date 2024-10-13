@@ -21,7 +21,7 @@ export class RotatingTitle extends Material {
     draw(p: P5): void {
         p.push()
 
-        p.translate(this.pos); 
+        p.translate(P5.Vector.add(this.pos, this.pointOfOrigin)); 
 
         p.strokeWeight(0)
 
