@@ -1,17 +1,17 @@
 import P5 from "p5";
-import { Drawable } from "../../interfaces/drawable";
+import { Material } from "../../interfaces/material";
 
-export class RotatingTitle implements Drawable {
-
+export class RotatingTitle extends Material {
     private graphics: P5.Graphics;
 
     constructor(
         p: P5, 
-        public pos: P5.Vector,
-        public title: string,
+        pos: P5.Vector,
+        public _title: string,
         public rainbowMode: boolean = false,
         private textSize = 50
     ) {
+        super(pos)
         this.graphics = p.createGraphics(400,300);
         this.graphics.clear()
         this.graphics.textAlign(p.CENTER);
@@ -22,8 +22,12 @@ export class RotatingTitle implements Drawable {
         p.push()
 
         p.translate(this.pos); 
+
         p.strokeWeight(0)
-        p.rotateY(p.frameCount * 0.01);
+
+        // lógica para inverter o texto quando ele estiver do lado errado
+        let rot = p.frameCount * 0.01
+        p.rotateY((rot % p.PI) - (p.PI / 2));
 
         if (this.rainbowMode) {
             // todo: fazer ele não ir para o 0 (se não fica invisivel)
@@ -36,18 +40,23 @@ export class RotatingTitle implements Drawable {
         }
 
         // todo: remover esse tamanho hardcoded
-        this.graphics.text(this.title, 100, 20, 200, 200);
+        this.graphics.text(this._title, 100, 20, 200, 200);
         p.texture(this.graphics);
-        p.plane(150,150);
+        p.plane(150,150)
 
         p.pop()
     }
 
-    public getTitle(): string {
-        return this.title;
+    public get title(): string {
+        return this._title;
     }
 
-    public setTitle(title: string): void {
-        this.title = title;
+    public set title(title: string) {
+        this._title = title;
     }
+
+    isInside(_: P5.Vector): boolean {
+        throw new Error("Method not implemented.");
+    }
+
 }

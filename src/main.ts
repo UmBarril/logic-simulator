@@ -1,36 +1,42 @@
 import P5 from "p5"
-import { Drawable } from "./interfaces/drawable"
-import { CircuitDrawable } from "./materials/drawablecircuit"
-import { KeyboardListener } from "./interfaces/keyboardlistener"
-import { Circuit } from "./logic/circuit"
-import { OutputButton } from "./materials/outputcircle"
-import { Clickable } from "./interfaces/clickable"
 import { canvaPosToWebglPos, randomPos } from "./util/util"
-import { RotatingTitle } from "./materials/random/rotatingtitle"
+import { RotatingTitle } from "./materials/ui/rotatingtitle"
+import { Material } from "./interfaces/material"
+import { Circle } from "./materials/shapes/circle"
+import { Modifiers } from "./materials/modifiers"
+import { OutputMaterial } from "./materials/circuits/outputmaterial"
+import { SceneManager } from "./scenemgr"
 
 const sketch = (p: P5) => {
-  let drawableElements: Drawable[] = []
-  let clickableElements: Clickable[] = []
-  let keyboardListeners: KeyboardListener[] = []
-  let cam: P5.Camera;
+  // let cam: P5.Camera;
 
   p.setup = () => {
+    SceneManager.initialise()
     p.createCanvas(800, 600, p.WEBGL) 
 
-    let ob = new OutputButton(randomPos(p))
+    let circle = new Circle(
+      p.createVector(0, 0),
+      30,
+      p.color(255, 0, 0),
+      new Modifiers<Circle>().addOnClick((m) => {
+        m.pos = randomPos(p)
+        return false
+      })
+    )
+    SceneManager.currentScene.add(circle)
 
-    drawableElements.push(ob)
+    let om = new OutputMaterial(p, randomPos(p))
+    SceneManager.currentScene.add(om)
+
+    // cam = p.createCamera();
 
     let title = 'logic simulator v0.1'
-    drawableElements.push(
-      new RotatingTitle(p, p.createVector(-p.width / 2 + 85, -p.height / 2 + 100), title, true)
-    )
-
-    clickableElements.push(ob)
-    keyboardListeners.push(ob)
+    let titleMaterial = new RotatingTitle(p, p.createVector(-p.width / 2 + 85, -p.height / 2 + 100), title, true)
+    // titleMaterial.setCamera(cam)
+    SceneManager.currentScene.add(titleMaterial)
 
     // camera e zoom
-    cam = p.createCamera();
+    // cam = p.createCamera();
 
     // p.describe('p5.js is cool!');
   }
@@ -54,41 +60,73 @@ const sketch = (p: P5) => {
   // p.doubleClicked = (e: MouseEvent) => { } 
 
   p.keyPressed = (e: KeyboardEvent) => {
-    keyboardListeners.forEach(k => {
+    SceneManager.currentScene.getAllKeyboardListeners().forEach(k => {
       k.keyPressed(p, e.key)
     });
   }
   
   p.keyReleased = (e: KeyboardEvent) => {
-
-  }
-  
-  p.mouseClicked = (e: MouseEvent) => {
-    clickableElements.forEach(c => {
-      c.click(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY))
+    SceneManager.currentScene.getAllKeyboardListeners().forEach(k => {
+      k.keyReleased(p, e.key)
     });
   }
 
-  p.mousePressed = (e: MouseEvent) => {
-    clickableElements.forEach(c => {
-      c.pressed(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY))
-    });
+  p.mouseClicked = (_: MouseEvent) => {
+    SceneManager.currentScene.getAllClickableMaterials().forEach(handleClick);
   }
 
-  p.mouseReleased = (e: MouseEvent) => {
-    clickableElements.forEach(c => {
-      c.released(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY))
-    });
+  p.mousePressed = (_: MouseEvent) => {
+    SceneManager.currentScene.getAllClickableMaterials().forEach(handlePressed);
+  }
+
+  p.mouseReleased = (_: MouseEvent) => {
+    SceneManager.currentScene.getAllClickableMaterials().forEach(handleReleased);
   }
 
   p.draw = () => {
     p.background(53)
+    SceneManager.currentScene.getAllMaterials().forEach(handleDraw);
+  }
 
-    drawableElements.forEach(o => {
-      p.push()
-      o.draw(p)
-      p.pop()
-    });
+  // se um filho foi clicado, ignorar clique no pai
+  function handleClick(m: Material): boolean {
+    let ignore = false
+
+    m.children.forEach(c => {
+      ignore = handleClick(c)
+    })
+
+    if (ignore) {
+       return ignore
+    }
+
+    return m.click(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY)) 
+  }
+
+  function handlePressed(m: Material) {
+    m.children.forEach(c => {
+      handlePressed(c)
+    })
+
+    m.pressed(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY))
+  }
+
+  function handleReleased(m: Material) {
+    m.children.forEach(c => {
+      handleReleased(c)
+    })
+
+    m.released(p, canvaPosToWebglPos(p, p.mouseX, p.mouseY))
+  }
+
+  function handleDraw(m: Material) {
+    m.children.forEach(c => {  
+      c.pointOfOrigin = m.pos
+      handleDraw(c)
+    })
+    p.push()
+    m.draw(p)
+    p.pop()
   }
 }
 
