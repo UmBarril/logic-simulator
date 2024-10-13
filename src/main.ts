@@ -1,7 +1,7 @@
 import P5 from "p5"
 import { canvaPosToWebglPos, randomPos } from "./util/util"
 import { RotatingTitle } from "./materials/ui/rotatingtitle"
-import { Material } from "./interfaces/material"
+import { Material } from "./materials/interfaces/material"
 import { Circle } from "./materials/shapes/circle"
 import { Modifiers } from "./materials/modifiers"
 import { OutputMaterial } from "./materials/circuits/outputmaterial"

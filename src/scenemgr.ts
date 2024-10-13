@@ -1,5 +1,5 @@
-import { Material } from './interfaces/material'
-import { KeyboardListener } from './interfaces/keyboardlistener'
+import { Material } from './materials/interfaces/material'
+import { KeyboardListener } from './materials/interfaces/keyboardlistener'
 
 export class SceneManager {
 
@@ -14,6 +14,10 @@ export class SceneManager {
 
     public static get currentScene() {
         return SceneManager._currentScene
+    }
+
+    notify(msg: string) {
+        // TODO
     }
 
     // todo: uma melhor maneira de resolve isso

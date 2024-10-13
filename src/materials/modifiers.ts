@@ -1,5 +1,5 @@
 import P5 from "p5"
-import { Material } from "../interfaces/material";
+import { Material } from "./interfaces/material";
 
 type Callback<T> = ((m: T, pos: P5.Vector) => boolean) | null
 

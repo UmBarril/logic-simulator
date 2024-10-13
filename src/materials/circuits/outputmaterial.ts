@@ -1,13 +1,15 @@
 import P5 from "p5";
 import { Directions } from "../../util/direction";
 import { canvaPosToWebglPos } from "../../util/util";
-import { KeyboardListener } from "../../interfaces/keyboardlistener";
+import { KeyboardListener } from "../interfaces/keyboardlistener";
 import { rotateKey as rotateClockWiseKey } from "../../util/settings";
-import { Material } from "../../interfaces/material";
+import { Material } from "../interfaces/material";
 import { Rectangle } from "../shapes/rectangle";
 import { Circle } from "../shapes/circle";
 import { Modifiers } from "../modifiers";
 import { Line } from "../shapes/line";
+import { TextBox } from "../ui/textbox";
+import { Modifiers } from "../interfaces/modifiers";
 
 /**
  * Essa classe representa um botão de saída de um circuito lógico.

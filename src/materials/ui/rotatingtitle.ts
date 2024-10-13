@@ -1,5 +1,5 @@
 import P5 from "p5";
-import { Material } from "../../interfaces/material";
+import { Material } from "../interfaces/material";
 
 export class RotatingTitle extends Material {
     private graphics: P5.Graphics;

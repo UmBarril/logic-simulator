@@ -1,7 +1,7 @@
 import P5 from "p5";
 import { Drawable } from "./drawable";
 import { Clickable } from "./clickable";
-import { Modifiers } from "../materials/modifiers";
+import { Modifiers } from "../modifiers";
 
 // TODO: fazer uma interface para facilitar rotacao
 export abstract class Material implements Drawable, Clickable {
