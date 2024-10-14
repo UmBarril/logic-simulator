@@ -6,11 +6,14 @@ import { Material } from "../materials/interfaces/material"
 import { Workspace } from "../workspace"
 import { IOMaterial } from "../materials/circuits/iomaterial"
 import { ConnectionManager } from "../materials/circuits/connectionmgr"
+import { Menu } from "../materials/ui/menu"
 
 export class TestingWorkspace implements Workspace {
 
     getMaterials(p: P5) {
         let materials: Material[] = []
+
+        let menu = new Menu(p, p.createVector(-100, -300))
 
         let circle = new Circle(
             p.createVector(0, 0),
@@ -28,6 +31,7 @@ export class TestingWorkspace implements Workspace {
         materials.push(connectionManager)
         materials.push(om)
         materials.push(circle)
+        materials.push(menu)
 
         return materials
     }
