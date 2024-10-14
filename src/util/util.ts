@@ -1,4 +1,5 @@
 import P5 from 'p5'
+import { offset, scale } from '../main'
 
 // Note que p.mouseX e p.mouseY são as coordenadas do canvas, não do mundo
 // Também, p.mouseX e p.mouseY começam no canto superior esquerdo, ao contrário do webgl
@@ -10,8 +11,14 @@ export function canvaPosToWebglPos(p: P5, x: number, y: number): P5.Vector {
 }
 
 // Posição do mouse no mundo
+// export function getMousePosRelativeToWebgl(p: P5): P5.Vector {
+//     return canvaPosToWebglPos(p, p.mouseX, p.mouseY).mult(1/scale)
+// }
+
+// TODO: consertar, pois a escala e offsets não estão sendo considerados corretamente
+// Posição do mouse no mundo
 export function getMousePos(p: P5): P5.Vector {
-    return canvaPosToWebglPos(p, p.mouseX, p.mouseY)
+    return canvaPosToWebglPos(p, p.mouseX, p.mouseY).add(offset).mult(1/scale)
 }
 
 /**

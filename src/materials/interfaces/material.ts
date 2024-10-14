@@ -19,7 +19,7 @@ export abstract class Material implements Drawable, Clickable {
      * Função chamada constantemente para desenhar o material.
      * @param p Instância do P5
      */
-    abstract draw(p: P5): void
+    abstract draw(p: P5 | P5.Graphics): void
 
     /**
      * Usado para verificar se o ponto está dentro do material.
@@ -36,10 +36,17 @@ export abstract class Material implements Drawable, Clickable {
         this._children.push(child)
     }
 
-    pressed(p: P5, pos: P5.Vector): void {
-        if (this._modifiers.onMousePressed != null && this.isInside(pos)){
-            this._modifiers.onMousePressed(this, pos)
+    /**
+     * @param p P5
+     * @param pos Posição do ponto
+     * @returns Se o material pai deve ignorar o clique
+     */
+    pressed(p: P5, pos: P5.Vector): boolean {
+        // talvez passar essa lógica para algum outro lugar
+        if (this._modifiers.onMousePressed != null){
+            return this._modifiers.onMousePressed(this, pos)
         }
+        return false
     }
 
     released(p: P5, pos: P5.Vector): void {
@@ -48,8 +55,13 @@ export abstract class Material implements Drawable, Clickable {
         }
     }
 
+    /**
+     * @param p P5
+     * @param pos Posição do ponto
+     * @returns Se o material pai deve ignorar o clique
+     */
     click(p: P5, pos: P5.Vector): boolean {
-        if (this._modifiers.onClick != null && this.isInside(pos)){
+        if (this._modifiers.onClick != null){
             return this._modifiers.onClick(this, pos)
         }
         return false
@@ -87,7 +99,7 @@ export abstract class Material implements Drawable, Clickable {
     }
 
     /**
-     * Difine a posição do material relativo ao seu ponto de origem 
+     * Define a posição do material relativo ao seu ponto de origem 
      * */ 
     public set pos(pos: P5.Vector){
         this._pos = pos;
