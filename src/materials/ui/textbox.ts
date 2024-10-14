@@ -2,6 +2,7 @@ import P5 from "p5"
 import { Material } from "../interfaces/material";
 import { Modifiers } from "../modifiers";
 
+// TODO: FAZER ISSO FUNCIONAR PROPRIAMENTE
 export class TextBox extends Material {
     private graphics: P5.Graphics;
 

@@ -221,7 +221,6 @@ export class IOMaterial extends Material implements KeyboardListener {
         //     let realPos = canvaPosToWebglPos(p, p.mouseX, p.mouseY)
         //     p.line(this.connectionPointX + this.padSize / 2, this.padY + this.padSize / 2, realPos.x, realPos.y)
         // }
-        p.pop()
     }
 
     override isInside(_: P5.Vector): boolean {

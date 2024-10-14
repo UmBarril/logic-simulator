@@ -22,7 +22,6 @@ export class Modifiers<T extends Material> {
 
     addOnMousePressed(callback: Callback<T>): Modifiers<T> {
         this.onMousePressed = callback
-        console.log(this.onMousePressed)
         return this
     }
 
