@@ -10,7 +10,7 @@ export class Toolbar {
     createButtons() {
         const buttonWidth = 80;
         const buttonHeight = 30;
-        const toolbarY = 20;  
+        const toolbarY = 540;  
 
         const labels = ['AND', 'OR', 'NOT', 'NAND', 'NOR', 'XOR', 'XNOR'];
         let startX = 20;
@@ -28,12 +28,14 @@ export class Toolbar {
     }
 
     draw(p: p5) {
+        // Desenha a barra
         p.fill(211);  
         p.noStroke();
-        p.rect(0, 0, p.width, 60);  
+        p.rect(0, p.height - 60, p.width, 60);  
 
         this.buttons.forEach(button => {
-            p.fill(255);  
+            // Cor dos botões
+            p.fill(100, 150, 255);  
             p.stroke(0);  
             p.rect(button.x, button.y, button.w, button.h);
 
@@ -53,6 +55,7 @@ export class Toolbar {
         });
     }
 }
+
 
 
 const sketch = (p: p5) => {
