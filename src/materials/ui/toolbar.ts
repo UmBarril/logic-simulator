@@ -7,7 +7,6 @@ export class Toolbar {
         this.createButtons();
     }
 
-    
     createButtons() {
         const buttonWidth = 80;
         const buttonHeight = 30;
@@ -28,7 +27,7 @@ export class Toolbar {
         });
     }
 
-    draw() {
+    draw(p: p5) {
         p.fill(211);  
         p.noStroke();
         p.rect(0, 0, p.width, 60);  
@@ -38,7 +37,6 @@ export class Toolbar {
             p.stroke(0);  
             p.rect(button.x, button.y, button.w, button.h);
 
-            
             p.fill(0);  
             p.noStroke();
             p.textAlign(p.CENTER, p.CENTER);
@@ -55,3 +53,24 @@ export class Toolbar {
         });
     }
 }
+
+
+const sketch = (p: p5) => {
+    let toolbar: Toolbar;
+
+    p.setup = () => {
+        p.createCanvas(800, 600);
+        toolbar = new Toolbar();
+    };
+
+    p.draw = () => {
+        p.background(220);
+        toolbar.draw(p);
+    };
+
+    p.mousePressed = () => {
+        toolbar.handleClick(p.mouseX, p.mouseY);
+    };
+};
+
+new p5(sketch);
