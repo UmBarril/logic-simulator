@@ -1,4 +1,4 @@
-import P5  from "p5"
+import P5 from "p5"
 import { getMousePos } from "./util/util"
 import { RotatingTitle } from "./materials/ui/rotatingtitle"
 import { Material } from "./materials/interfaces/material"
@@ -16,6 +16,8 @@ const sketch = (p: P5) => {
   const initialWidth = p.windowWidth
   const initialHeight = p.windowHeight
 
+  const connectionManager = new ConnectionManager()
+
   let dragging = false
 
   p.setup = () => {
@@ -26,18 +28,14 @@ const sketch = (p: P5) => {
 
     // TODO: fazer algum tipo de menu para selecionar isso OU 
     // fazer um sistema para carregar automaticamente pelos argumentos na url
-
     let workspace: Workspace = new TestingWorkspace()
-    workspace.getMaterials(p).forEach(m => MaterialManager.current.add(m))
+    workspace.getMaterials(p, connectionManager).forEach(m => MaterialManager.current.add(m))
 
     setupUI()
-
-    p.describe('p5.js');
   }
 
   p.windowResized = () => {
     p.resizeCanvas(p.windowWidth, p.windowHeight);
-    ui.resizeCanvas(p.windowWidth, p.windowHeight);
     MaterialManager.current.updateUiPostions()
   }
 
@@ -75,9 +73,6 @@ const sketch = (p: P5) => {
   }
 
   p.mouseClicked = (_: MouseEvent) => {
-    console.log("mouse.x" + getMousePos(p).x)
-    console.log("cam.centerX" + cam.upZ)
-
     MaterialManager.current.getAllClickableMaterials().forEach(handleClick);
 
     let clickedOutside = true
@@ -132,7 +127,7 @@ const sketch = (p: P5) => {
 
   p.draw = () => {
     p.background(53)
-    
+
     MaterialManager.current.getAllUIMaterials().forEach(handleDrawUI);
 
     if (dragging) {
@@ -199,9 +194,7 @@ const sketch = (p: P5) => {
       c.pointOfOrigin = m.pos
       handleDraw(c)
     })
-    p.push()
     m.draw(p)
-    p.pop()
   }
 
   function handleDrawUI(m: Material) {

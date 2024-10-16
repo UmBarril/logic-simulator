@@ -29,7 +29,7 @@ export class Line extends Material {
 
     /** @todo */
     isInside(pos: P5.Vector): boolean {
-        throw new Error("Method not implemented.");
+        return false;
     }
 
 }
