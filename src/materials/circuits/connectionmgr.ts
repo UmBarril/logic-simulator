@@ -16,7 +16,7 @@ import { Vector } from "p5";
 export class ConnectionManager extends Material {
     
     private selectedIO: IOMaterial | null = null
-    private connectionLines: ConnectionLine[] = []
+    private connectionLines = new Map<IOMaterial, ConnectionLine>() 
 
     constructor() { 
         super(new P5.Vector)
@@ -31,15 +31,15 @@ export class ConnectionManager extends Material {
         if (this.selectedIO == null) {
             this.selectedIO = io
 
-            let netLine = new ConnectionLine(this, io, io.getValue())
-            this.connectionLines.push(netLine)
+            let line = new ConnectionLine(this, io, io.getValue())
+            this.connectionLines.set(io, line)
             // SceneManager.currentScene.add(this.connectionLine)
             return
         }
 
         if (this.selectedIO == io) {
             this.selectedIO = null
-            // this.
+            this.connectionLines.delete(io)
             return
         }
 
@@ -61,7 +61,10 @@ export class ConnectionManager extends Material {
     }
 
     unselectIfSelected() {
-        this.selectedIO = null
+        if (this.selectedIO != null) {
+            this.connectionLines.delete(this.selectedIO)
+            this.selectedIO = null
+        }
     }
 
     draw(p: P5): void { 
