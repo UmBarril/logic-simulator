@@ -6,7 +6,7 @@ import { Material } from "../materials/interfaces/material"
 import { Workspace } from "../workspace"
 import { IOMaterial } from "../materials/circuits/iomaterial"
 import { ConnectionManager } from "../materials/circuits/connectionmgr"
-import { Menu } from "../materials/ui/menu"
+import { Menu } from "../materials/ui/Menu"
 
 export class TestingWorkspace implements Workspace {
 
