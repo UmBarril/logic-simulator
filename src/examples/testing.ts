@@ -3,14 +3,16 @@ import { Modifiers } from "../materials/modifiers"
 import { Circle } from "../materials/shapes/circle"
 import { randomPos } from "../util/util"
 import { Material } from "../materials/interfaces/material"
-import { Workspace } from "../workspace"
+import { Workspace } from "../screens/workspace"
 import { IOMaterial } from "../materials/circuits/iomaterial"
 import { ConnectionManager } from "../materials/circuits/connectionmgr"
 
-export class TestingWorkspace implements Workspace {
+export class TestingWorkspace extends Workspace {
 
-    getMaterials(p: P5) {
-        let materials: Material[] = []
+    constructor(
+        p: P5,
+    ) {
+        super()
 
         let circle = new Circle(
             p.createVector(0, 0),
@@ -22,14 +24,11 @@ export class TestingWorkspace implements Workspace {
             })
         )
 
-        let connectionManager = new ConnectionManager()
-        let om = new IOMaterial(p, randomPos(p), connectionManager)
+        let om = new IOMaterial(p, randomPos(p), this.connectionManager)
 
-        materials.push(connectionManager)
-        materials.push(om)
-        materials.push(circle)
-
-        return materials
+        this.addChild(this.connectionManager) // transformar isso em this.add()
+        this.addChild(om)
+        this.addChild(circle)
     }
 
 }
