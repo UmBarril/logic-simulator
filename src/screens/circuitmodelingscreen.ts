@@ -79,7 +79,6 @@ export class CircuitModelingScreen implements Screen {
     // mas como pressionamento de teclado é algo global, acho que faz um pouco de sentido
     keyPressed(e: KeyboardEvent): void {
         if (e.key == ' ') { // espaço
-            //  por isso ali   VVVVVVV
             this.workspace.resetPosition(this.p)
         }
         if (e.key == 'r') {
@@ -103,6 +102,7 @@ export class CircuitModelingScreen implements Screen {
     }
 
     mouseReleased(e: MouseEvent): void {
+        console.log("test")
         this.workspace.mouseReleased(this.p, getMousePos(this.p))
         this.ui.mouseReleased(this.p, getMousePos(this.p))
     }

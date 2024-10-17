@@ -1,6 +1,6 @@
 import P5 from "p5"
 import { ScreenManager } from "./screens/screenmgr"
-import { CircuitModelingScreen } from "./screens/circuitmodelingscene"
+import { CircuitModelingScreen } from "./screens/circuitmodelingscreen"
 
 const sketch = (p: P5) => {
   const screenManager = new ScreenManager()
