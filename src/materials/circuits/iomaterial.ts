@@ -3,7 +3,6 @@ import { Directions } from "../../util/direction";
 import { getMousePos } from "../../util/util";
 import { KeyboardListener } from "../interfaces/keyboardlistener";
 import { rotateKey as rotateClockWiseKey } from "../../util/settings";
-import { Material } from "../interfaces/material";
 import { Rectangle } from "../shapes/rectangle";
 import { Circle } from "../shapes/circle";
 import { Line } from "../shapes/line";

@@ -102,7 +102,6 @@ export class CircuitModelingScreen implements Screen {
     }
 
     mouseReleased(e: MouseEvent): void {
-        console.log("test")
         this.workspace.mouseReleased(this.p, getMousePos(this.p))
         this.ui.mouseReleased(this.p, getMousePos(this.p))
     }

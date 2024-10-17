@@ -78,7 +78,6 @@ export class Workspace extends MaterialGroup {
 
     // TODO: verificar se o clique foi numa parte da ui
     override mouseClicked(p: P5, pos: P5.Vector): boolean {
-        console.log(this.posInsideWorkspace(pos))
         let childWasClicked = super.mouseClicked(p, this.posInsideWorkspace(pos))
         if (!childWasClicked){
             this.connectionManager.unselectIfSelected()   
