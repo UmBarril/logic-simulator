@@ -3,15 +3,17 @@ import { Modifiers } from "../materials/modifiers"
 import { Circle } from "../materials/shapes/circle"
 import { randomPos } from "../util/util"
 import { Material } from "../materials/interfaces/material"
-import { Workspace } from "../workspace"
+import { Workspace } from "../screens/workspace"
 import { IOMaterial } from "../materials/circuits/iomaterial"
 import { ConnectionManager } from "../materials/circuits/connectionmgr"
-import { Menu } from "../materials/ui/Menu"
+import { Menu } from "../materials/ui/menu"
 
-export class TestingWorkspace implements Workspace {
+export class TestingWorkspace extends Workspace {
 
-    getMaterials(p: P5) {
-        let materials: Material[] = []
+    constructor(
+        p: P5,
+    ) {
+        super()
 
         let menu = new Menu(p, p.createVector(-100, -300))
 
@@ -25,15 +27,12 @@ export class TestingWorkspace implements Workspace {
             })
         )
 
-        let connectionManager = new ConnectionManager()
-        let om = new IOMaterial(p, randomPos(p), connectionManager)
+        let om = new IOMaterial(p, randomPos(p), this.connectionManager)
 
-        materials.push(connectionManager)
-        materials.push(om)
-        materials.push(circle)
-        materials.push(menu)
-
-        return materials
+        this.addChild(this.connectionManager) // transformar isso em this.add()
+        this.addChild(om)
+        this.addChild(circle)
+        this.addChild(menu);
     }
 
 }

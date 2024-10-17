@@ -60,6 +60,10 @@ export class ConnectionManager extends Material {
         // TODO: mostrar visualmente que o IO foi selecionado (talvez muandar uma notificacao)
     }
 
+    unselectIfSelected() {
+        this.selectedIO = null
+    }
+
     draw(p: P5): void { 
         // Desenhando as linhas manualmente em vez de colorcar elas como filhos.
         // Não gosto muito de fazer isso pois estou repetindo código.
@@ -69,6 +73,6 @@ export class ConnectionManager extends Material {
     }
 
     isInside(pos: Vector): boolean {
-        return true
+        return false
     }
 }

@@ -10,6 +10,12 @@ export function canvaPosToWebglPos(p: P5, x: number, y: number): P5.Vector {
 }
 
 // Posição do mouse no mundo
+// export function getMousePosRelativeToWebgl(p: P5): P5.Vector {
+//     return canvaPosToWebglPos(p, p.mouseX, p.mouseY).mult(1/scale)
+// }
+
+// TODO: consertar, pois a escala e offsets não estão sendo considerados corretamente
+// Posição do mouse no mundo
 export function getMousePos(p: P5): P5.Vector {
     return canvaPosToWebglPos(p, p.mouseX, p.mouseY)
 }

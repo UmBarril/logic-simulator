@@ -10,12 +10,13 @@ import { Line } from "../shapes/line";
 import { TextBox } from "../ui/textbox";
 import { Modifiers } from "../modifiers";
 import { ConnectionManager } from "./connectionmgr";
+import { MaterialGroup } from "../interfaces/materialgroup";
 
 /**
  * Essa classe representa um botão de saída de um circuito lógico.
  * O botão pode ser clicado e arrastado para criar uma linha.
  */
-export class IOMaterial extends Material implements KeyboardListener {
+export class IOMaterial extends MaterialGroup implements KeyboardListener {
 
     private readonly bridgeColor = [255, 5, 100]
     private readonly enabledColor = [255, 255, 0]
@@ -206,22 +207,12 @@ export class IOMaterial extends Material implements KeyboardListener {
 
     // aqui o draw funciona mais como um update
     override draw(p: P5): void {
+        super.draw(p)
 
         // se tiver movendo, atualiza a posição
         if(this.isMoving){
             this.onMoving()
         }
-
-        // // Linha (caso esteja sendo arrastada)
-        // p.push()
-        // if (this.isDraggingLine){
-        //     p.stroke(255)
-        //     p.strokeWeight(10)
-
-        //     let realPos = canvaPosToWebglPos(p, p.mouseX, p.mouseY)
-        //     p.line(this.connectionPointX + this.padSize / 2, this.padY + this.padSize / 2, realPos.x, realPos.y)
-        // }
-        p.pop()
     }
 
     override isInside(_: P5.Vector): boolean {

@@ -5,6 +5,16 @@ type Callback<T> = ((m: T, pos: P5.Vector) => boolean) | null
 
 export class Modifiers<T extends Material> {
 
+    // converter para isso?
+    //  https://stackoverflow.com/questions/21969248/javascript-unpack-object-as-function-parameters
+    // constructor(
+    //     {
+    //         onClick: Callback<T> = null,
+    //         onMousePressed: Callback<T> = null,
+    //         onMouseReleased: Callback<T> = null,
+    //         zIndex: number = 0
+    //     }
+    // ){
     constructor(
         public onClick: Callback<T> = null,
         public onMousePressed: Callback<T> = null,
@@ -22,7 +32,6 @@ export class Modifiers<T extends Material> {
 
     addOnMousePressed(callback: Callback<T>): Modifiers<T> {
         this.onMousePressed = callback
-        console.log(this.onMousePressed)
         return this
     }
 
