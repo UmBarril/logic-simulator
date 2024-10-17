@@ -10,13 +10,13 @@ export class TextBox extends Material {
         p: P5,
         pos: P5.Vector,
         private _title: string,
-        textSize = 40,
+        pxTextSize = 40,  // em pixel
         modifiers = new Modifiers<TextBox>()
     ) {
         super(pos, modifiers)
         this.graphics = p.createGraphics(150,150);
         this.graphics.clear()
-        this.graphics.textSize(textSize);
+        this.graphics.textSize(pxTextSize);
     }
 
     draw(p: P5): void {
