@@ -2,10 +2,8 @@ import P5 from "p5"
 import { Modifiers } from "../materials/modifiers"
 import { Circle } from "../materials/shapes/circle"
 import { randomPos } from "../util/util"
-import { Material } from "../materials/interfaces/material"
 import { Workspace } from "../screens/workspace"
 import { IOMaterial } from "../materials/circuits/iomaterial"
-import { ConnectionManager } from "../materials/circuits/connectionmgr"
 import { Menu } from "../materials/ui/menu"
 
 export class TestingWorkspace extends Workspace {

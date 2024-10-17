@@ -1,8 +1,8 @@
 import P5 from "p5"
-import { Material } from "../interfaces/material"
 import { TextBox } from "./textbox"
+import { MaterialGroup } from "../interfaces/materialgroup"
 
-export class Menu extends Material {
+export class Menu extends MaterialGroup {
     //private textbox: TextBox
     private buttons: {label: string, y: number, textbox: TextBox} []
     

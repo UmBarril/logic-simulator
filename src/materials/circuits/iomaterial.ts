@@ -215,10 +215,6 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener {
         }
     }
 
-    override isInside(_: P5.Vector): boolean {
-        return false; // não detectar
-    }
-
     // keyboardlistener interface
     keyReleased(p: P5, key: string): void { }
 

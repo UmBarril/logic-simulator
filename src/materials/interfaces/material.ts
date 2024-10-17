@@ -37,7 +37,7 @@ export abstract class Material implements Drawable, Clickable {
      */
     mousePressed(p: P5, pos: P5.Vector): boolean {
         // talvez passar essa lógica para algum outro lugar
-        if (this._modifiers.onMousePressed != null){
+        if (this._modifiers.onMousePressed != null && this.isInside(pos)){
             return this._modifiers.onMousePressed(this, pos)
         }
         return false
