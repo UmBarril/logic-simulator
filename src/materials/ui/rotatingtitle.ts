@@ -55,7 +55,7 @@ export class RotatingTitle extends Material {
     }
 
     isInside(_: P5.Vector): boolean {
-        throw new Error("Method not implemented.");
+        return false
     }
 
 }
