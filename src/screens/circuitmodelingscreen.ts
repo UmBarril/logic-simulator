@@ -4,12 +4,13 @@ import { Screen } from './screen'
 import { TestingWorkspace } from "../examples/testing"
 import { UI } from "./ui"
 import { getMousePos } from "../util/util"
+import { Toolbar } from "../materials/ui/toolbar";
 
 export class CircuitModelingScreen implements Screen {
     
     private workspace: Workspace
     private ui: UI
-    // private toolBar: ToolBar | null = null
+    private toolBar: Toolbar 
     // private menu: FloatingMenu | null = null
 
     constructor(
@@ -18,6 +19,7 @@ export class CircuitModelingScreen implements Screen {
         // this.currentWorkspace = new DefaultWorkspace()
         this.workspace = new TestingWorkspace(p)
         this.ui = new UI(p)
+        this.toolBar = new Toolbar();
     }
 
     // TODO: fazer algum tipo de menu para selecionar isso OU 
@@ -71,6 +73,7 @@ export class CircuitModelingScreen implements Screen {
         this.p.background(53)
         this.ui.draw(this.p)
         this.workspace.draw(this.p)
+        this.toolBar.draw(this.p);
     }
 
     doubleClicked(e: MouseEvent): void { }
@@ -94,6 +97,7 @@ export class CircuitModelingScreen implements Screen {
     mouseClicked(e: MouseEvent): void {
         this.workspace.mouseClicked(this.p, getMousePos(this.p))
         this.ui.mouseClicked(this.p, getMousePos(this.p))
+        this.toolBar.handleClick(e.clientX, e.clientY);
     }
 
     mousePressed(e: MouseEvent): void {
