@@ -5,8 +5,9 @@ import { Material } from "../interfaces/material";
 import { Circle } from "../shapes/circle";
 import { Modifiers } from "../modifiers";
 import { ConnectionManager } from "./connectionmgr";
+import { MaterialGroup } from "../interfaces/materialgroup";
 
-export class CircuitMaterial extends Material {
+export class CircuitMaterial extends MaterialGroup {
 
     private _isDragging: boolean = false
     private direction: Directions = Directions.RIGHT
@@ -36,7 +37,7 @@ export class CircuitMaterial extends Material {
                 this.ioCircleRad,
                 p.color(0, 255, 0),
                 new Modifiers<Circle>().addOnClick((m) => {
-                    connectionManager.select(m.input) // @todo
+                    // connectionManager.select(m.input) // @todo
                     return true
                 })
             )
@@ -52,7 +53,7 @@ export class CircuitMaterial extends Material {
                 this.ioCircleRad,
                 p.color(0, 255, 0), // @todo fazer isso trocar de cor
                 new Modifiers<Circle>().addOnClick((m) => {
-                    connectionManager.select(m.input) // @todo
+                    // connectionManager.select(m.input) // @todo
                     return true
                 })
             )

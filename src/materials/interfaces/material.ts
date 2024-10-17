@@ -6,9 +6,11 @@ import { Modifiers } from "../modifiers";
 // TODO: fazer uma interface para facilitar rotacao
 export abstract class Material implements Drawable, Clickable {
 
-    private isEnabled: boolean = true
+    // private isEnabled: boolean = true
     private _pointOfOrigin: P5.Vector = new P5.Vector(0, 0)
-    private _children: Material[] = []
+
+    // // se isto tiver ativado, cliques feitos em submateriais não serão passados para o material pai
+    // private overrideChildren: boolean = false 
 
     constructor(
         private _pos: P5.Vector,
@@ -19,7 +21,7 @@ export abstract class Material implements Drawable, Clickable {
      * Função chamada constantemente para desenhar o material.
      * @param p Instância do P5
      */
-    abstract draw(p: P5 | P5.Graphics): void
+    abstract draw(p: P5 | P5.Graphics): void;
 
     /**
      * Usado para verificar se o ponto está dentro do material.
@@ -28,20 +30,12 @@ export abstract class Material implements Drawable, Clickable {
      */
     abstract isInside(pos: P5.Vector): boolean
 
-    public get children() {
-        return this._children
-    }
-
-    addChild(child: Material){
-        this._children.push(child)
-    }
-
     /**
      * @param p P5
-     * @param pos Posição do ponto
-     * @returns Se o material pai deve ignorar o clique
+     * @param pos Posição do mouse
+     * @returns Se clicou dentro
      */
-    pressed(p: P5, pos: P5.Vector): boolean {
+    mousePressed(p: P5, pos: P5.Vector): boolean {
         // talvez passar essa lógica para algum outro lugar
         if (this._modifiers.onMousePressed != null){
             return this._modifiers.onMousePressed(this, pos)
@@ -49,7 +43,11 @@ export abstract class Material implements Drawable, Clickable {
         return false
     }
 
-    released(p: P5, pos: P5.Vector): void {
+    /**
+     * @param p P5
+     * @param pos Posição do mouse
+     */
+    mouseReleased(p: P5, pos: P5.Vector): void {
         if (this._modifiers.onMouseReleased != null) {
             this._modifiers.onMouseReleased(this, pos)
         }
@@ -60,8 +58,8 @@ export abstract class Material implements Drawable, Clickable {
      * @param pos Posição do ponto
      * @returns Se o material pai deve ignorar o clique
      */
-    click(p: P5, pos: P5.Vector): boolean {
-        if (this._modifiers.onClick != null){
+    mouseClicked(p: P5, pos: P5.Vector): boolean {
+        if (this._modifiers.onClick != null && this.isInside(pos)){
             return this._modifiers.onClick(this, pos)
         }
         return false
