@@ -54,14 +54,22 @@ export class Menu extends MaterialGroup {
         p.fill(0, 0, 139)
         p.rect(this.pos.x, this.pos.y + y, buttonWidth, buttonHeight, 10) // Botão com bordas arredondadas
 
-        // Texto
-        /* p.fill(255)
-        p.textSize(24)
-        p.textAlign(p.CENTER, p.CENTER)
-        p.text(this.pos.x, this.pos.y + buttonHeight / 2) // Centraliza o texto no botão */
+        // Texto corretamente desenhado no centro dos botões
+        p.fill(255);
+        p.textSize(24);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.text("Texto do Botão", this.pos.x + buttonWidth / 2, this.pos.y + y + buttonHeight / 2);
     }
-
+    // Verifica se um clique ocorre dentro dos limites de um botão
     isInside(pos: P5.Vector): boolean {
-        return false
+        const buttonWidth = 200;
+        const buttonHeight = 50;
+        return (
+            pos.x > this.pos.x &&
+            pos.x < this.pos.x + buttonWidth &&
+            pos.y > this.pos.y &&
+            pos.y < this.pos.y + buttonHeight
+        );
     }
+    
 }

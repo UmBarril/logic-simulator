@@ -9,6 +9,7 @@ interface Button {
     y: number;
     w: number;
     h: number;
+    isHovered?: boolean; // Adiciona propriedade para verificar se o botão está sendo destacado
 }
 
 /**
@@ -51,7 +52,8 @@ export class Toolbar {
     }
 
     private drawButton(p: P5, button: Button) {
-        p.fill(100, 150, 255);  
+        // Muda a cor do botão se o mouse estiver sobre ele
+        p.fill(button.isHovered ? [150, 200, 255] : [100, 150, 255]);  
         p.stroke(0);  
         p.rect(button.x, button.y, button.w, button.h);
 
@@ -65,9 +67,14 @@ export class Toolbar {
         this.buttons.forEach(button => {
             if (this.isMouseOverButton(mouseX, mouseY, button)) {
                 console.log(`${button.label} button clicked`);
-                // Aqui você pode disparar um evento ou chamar uma função específica
                 this.handleButtonAction(button.label);
             }
+        });
+    }
+
+    public handleMouseMove(mouseX: number, mouseY: number) {
+        this.buttons.forEach(button => {
+            button.isHovered = this.isMouseOverButton(mouseX, mouseY, button);
         });
     }
 
@@ -78,8 +85,7 @@ export class Toolbar {
 
     private handleButtonAction(label: string) {
         // Ações a serem realizadas quando um botão é clicado
-        // Por exemplo, você pode chamar um método na CircuitModelingScreen
         console.log(`Ação para o botão ${label}`);
-        // Aqui você pode implementar a lógica específica para cada botão
+        // Implementar a lógica específica para cada botão aqui
     }
 }
