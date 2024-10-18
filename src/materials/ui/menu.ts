@@ -3,7 +3,6 @@ import { TextBox } from "./textbox"
 import { MaterialGroup } from "../interfaces/materialgroup"
 
 export class Menu extends MaterialGroup {
-export class Menu extends MaterialGroup {
     //private textbox: TextBox
     private buttons: {label: string, y: number, textbox: TextBox} []
 
