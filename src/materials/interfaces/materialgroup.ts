@@ -44,7 +44,6 @@ export abstract class MaterialGroup extends Material {
      * @returns True se o clique foi dentro de algum dos filhos
      */ 
     override mouseClicked(p: P5, pos: P5.Vector): boolean {
-        // TODO: se um filho foi clicado, ignorar clique no pai
         return this._children.some(child => child.mouseClicked(p, pos))
     }
 
@@ -56,6 +55,15 @@ export abstract class MaterialGroup extends Material {
      */ 
     override mousePressed(p: P5, pos: P5.Vector): boolean {
         return this._children.some(child => child.mousePressed(p, pos))
+    }
+
+    /**
+     * Ativa o mouseReleased em todos os filhos
+     * @param p P5
+     * @param pos Posição de soltura
+     */ 
+    override mouseReleased(p: P5, pos: P5.Vector): void {
+        this._children.forEach(child => child.mouseReleased(p, pos))
     }
 
     /**

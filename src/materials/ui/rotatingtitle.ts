@@ -19,32 +19,35 @@ export class RotatingTitle extends Material {
     }
 
     draw(p: P5): void {
-        p.push()
-
+        p.push();
+    
         p.translate(P5.Vector.add(this.pos, this.pointOfOrigin)); 
-        p.strokeWeight(0)
-
-        // lógica para inverter o texto quando ele estiver do lado errado
-        let rot = p.frameCount * 0.01
+        p.strokeWeight(0);
+    
+        let rot = p.frameCount * 0.01;
         p.rotateY((rot % p.PI) - (p.PI / 2));
-
+    
         if (this.rainbowMode) {
-            // todo: fazer ele não ir para o 0 (se não fica invisivel)
-            let r = Math.abs((p.frameCount) % 510 - 255) // 255 -> 0 -> 255
-            let g = Math.abs((p.frameCount + 100) % 510 - 255)
-            let b = Math.abs((p.frameCount + 180) % 510 - 255)
-            this.graphics.fill(r, g, b)
+            let r = Math.max(50, Math.abs((p.frameCount) % 510 - 255));
+            let g = Math.max(50, Math.abs((p.frameCount + 100) % 510 - 255));
+            let b = Math.max(50, Math.abs((p.frameCount + 180) % 510 - 255));
+            this.graphics.fill(r, g, b);
         } else {
             this.graphics.fill(0);
         }
-
-        // todo: remover esse tamanho hardcoded
-        this.graphics.text(this._title, 100, 20, 200, 200);
+        //Assim a gente pode parametrizar de forma mais flexivel
+        const textX = 100;
+        const textY = 20;
+        const textWidth = 200;
+        const textHeight = 200;
+        this.graphics.text(this._title, textX, textY, textWidth, textHeight);
+    
         p.texture(this.graphics);
-        p.plane(150,150)
-
-        p.pop()
+        p.plane(150, 150);
+    
+        p.pop();
     }
+    
 
     public get title(): string {
         return this._title;
@@ -55,7 +58,7 @@ export class RotatingTitle extends Material {
     }
 
     isInside(_: P5.Vector): boolean {
-        throw new Error("Method not implemented.");
+        return false
     }
 
 }

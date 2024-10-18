@@ -67,7 +67,9 @@ export class Workspace extends MaterialGroup {
 
             this.offset.add(change)
         }
-        p.translate(this.offset.x * p.width / 2, this.offset.y * p.height / 2)
+        // ZOOM E MOVIMENTO AINDA NÃO FUNCIONAM
+        // DEIXANDO O CÓDIGO AQUI PARA QUANDO FOR CORRIGIDO VVVV
+        // p.translate(this.offset.x * p.width / 2, this.offset.y * p.height / 2)
         // p.scale(this._scale) // zoom
 
         super.draw(p)
@@ -76,6 +78,7 @@ export class Workspace extends MaterialGroup {
 
     // TODO: verificar se o clique foi numa parte da ui
     override mouseClicked(p: P5, pos: P5.Vector): boolean {
+        console.log(this.posInsideWorkspace(pos))
         let childWasClicked = super.mouseClicked(p, this.posInsideWorkspace(pos))
         if (!childWasClicked){
             this.connectionManager.unselectIfSelected()   
@@ -92,7 +95,7 @@ export class Workspace extends MaterialGroup {
     }
 
     override mouseReleased(p: P5, pos: P5.Vector): boolean {
-        console.log("mouse released")
+        super.mouseReleased(p, this.posInsideWorkspace(pos))
         this.dragging = false
         return true
     }
