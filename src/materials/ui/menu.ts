@@ -1,30 +1,23 @@
 import P5 from "p5"
-import { Material } from "../interfaces/material"
 import { TextBox } from "./textbox"
+import { MaterialGroup } from "../interfaces/materialgroup"
 
-export class Menu extends Material {
+export class Menu extends MaterialGroup {
     //private textbox: TextBox
     private buttons: {label: string, y: number, textbox: TextBox} []
-    
-    /* private readonly buttons = [
-        { label: 'Continuar', y: 100, textbox: new TextBox(p, pos.copy().add(0, 100), "Continuar", 24)},
-        { label: 'Novo Projeto', y: 160 },
-        { label: 'Carregar Projeto', y: 220 },
-        { label: 'Lorem Ipsum', y: 280 },
-        { label: 'Sair', y: 340 },
-    ] */
 
     constructor(
         p: P5,
-        pos: P5.Vector,
+        pos: P5.Vector
     ) {
         super(pos)
+
         this.buttons = [
-        { label: 'Continuar', y: 100, textbox: new TextBox(p, pos.copy().add(0, 100), "Continuar", 24)},
-        { label: 'Novo Projeto', y: 160, textbox: new TextBox(p, pos.copy().add(0, 160), "Novo Projeto", 24) },
-        { label: 'Carregar Projeto', y: 220, textbox: new TextBox(p, pos.copy().add(0, 220), "Lorem Ipsum", 24) },
-        { label: 'Lorem Ipsum', y: 280, textbox: new TextBox(p, pos.copy().add(0, 280), 'Lorem Ipsum', 24) },
-        { label: 'Sair', y: 340, textbox: new TextBox(p, pos.copy().add(0, 340), 'Sair', 24) }
+        { label: 'Continuar', y: 100, textbox: new TextBox(p, pos.copy().add(0, 130), 'Continuar', 32)},
+        { label: 'Novo Projeto', y: 160, textbox: new TextBox(p, pos.copy().add(-10, 190), 'Novo Projeto', 32)},
+        { label: 'Carregar Projeto', y: 220, textbox: new TextBox(p, pos.copy().add(-30, 250), 'Carregar Projeto', 32)},
+        { label: 'Lorem Ipsum', y: 280, textbox: new TextBox(p, pos.copy().add(-30, 310), 'Lorem Ipsum', 32)},
+        { label: 'Sair', y: 340, textbox: new TextBox(p, pos.copy().add(27, 370), 'Sair', 32)}
         ]
 
         for(let button of this.buttons){
@@ -49,16 +42,14 @@ export class Menu extends Material {
     drawButton(y: number, p: P5) {
         const buttonWidth = 200
         const buttonHeight = 50
+        const buttonX = this.pos.x - buttonWidth / 2
+        const buttonY = this.pos.y + y
 
         // Cor
-        p.fill(0, 0, 139)
-        p.rect(this.pos.x, this.pos.y + y, buttonWidth, buttonHeight, 10) // Botão com bordas arredondadas
+        p.fill(0, 0, 170)
+        p.rect(buttonX, buttonY, buttonWidth, buttonHeight, 10) // Botão com bordas arredondadas
 
-        // Texto
-        /* p.fill(255)
-        p.textSize(24)
-        p.textAlign(p.CENTER, p.CENTER)
-        p.text(this.pos.x, this.pos.y + buttonHeight / 2) // Centraliza o texto no botão */
+        //p.text(this.pos.x, this.pos.y + buttonHeight / 2) // Centraliza o texto no botão */
     }
 
     isInside(pos: P5.Vector): boolean {
