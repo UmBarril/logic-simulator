@@ -17,7 +17,7 @@ export class Rectangle extends Material {
 
     draw(p: P5){
         p.push()
-
+        p.scale(this.scale)
         p.translate(0,0,this.realPos.z)
         if (this._dragging && this.modifiers.onMousePressed != null){
             this.modifiers.onMousePressed(this, getMousePos(p))

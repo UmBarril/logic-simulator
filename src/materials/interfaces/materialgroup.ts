@@ -26,6 +26,11 @@ export abstract class MaterialGroup extends Material {
         return this._children
     }
 
+    override set scale(scale: number){
+        super.scale = scale
+        this._children.forEach(child => child.scale = scale)
+    }
+
     /** 
      * Desenha os filhos deste material
      * @param p P5

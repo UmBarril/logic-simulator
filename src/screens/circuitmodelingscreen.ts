@@ -47,10 +47,16 @@ export class CircuitModelingScreen implements Screen {
         // throw new Error("Method not implemented.")
     }
 
-    windowResized() {
+    windowResized(newScale: number) {
         // TODO
-        this.workspace.windowResized(this.p)
-        this.ui.windowResized(this.p)
+        this.workspace.scale = newScale
+
+        // Não permitir que a escala seja menor que 0.5 (se não textos ficam ilegíveis)
+        if (newScale < 0.5) {
+            this.ui.scale = 0.5
+        } else {
+            this.ui.scale = newScale
+        }
     }
 
     mouseWheel(e: MouseEvent): void {
@@ -62,9 +68,9 @@ export class CircuitModelingScreen implements Screen {
 
         // @ts-ignore
         if (e.delta > 0) {
-            this.workspace.scale = this.p.constrain(this.workspace.scale - (sensitivityZ * scaleFactor), minZoom, maxZoom);
+            this.workspace.zoom = this.p.constrain(this.workspace.zoom - (sensitivityZ * scaleFactor), minZoom, maxZoom);
         } else {
-            this.workspace.scale = this.p.constrain(this.workspace.scale + (sensitivityZ * scaleFactor), minZoom, maxZoom);
+            this.workspace.zoom = this.p.constrain(this.workspace.zoom + (sensitivityZ * scaleFactor), minZoom, maxZoom);
         }
     }
 

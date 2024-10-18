@@ -4,7 +4,7 @@ import { MaterialGroup } from "../materials/interfaces/materialgroup";
 
 export class Workspace extends MaterialGroup {
 
-    private _scale = 1 // zoom
+    private zoom = 1 // zoom
     private offset: P5.Vector // offset da posição dos items na workspace
     private dragging = false // se estamos arrastando a workspace
 
@@ -17,14 +17,6 @@ export class Workspace extends MaterialGroup {
 
     public get connectionManager() {
         return this._connectionManager;
-    }
-
-    public set scale(zoom: number) {
-        this._scale = zoom
-    }
-
-    public get scale() {
-        return this._scale
     }
 
     /**
@@ -52,7 +44,7 @@ export class Workspace extends MaterialGroup {
      */
     posInsideWorkspace(pos: P5.Vector): P5.Vector {
         // calculo está errado, corrigir depois TODO
-        return pos.add(this.offset).mult(1/this.scale)
+        return pos.add(this.offset).mult(1/this.scale * this.zoom)
     }
 
     override draw(p: P5): void {

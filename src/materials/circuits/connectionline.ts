@@ -41,6 +41,7 @@ export class ConnectionLine extends Material {
 
     draw(p: P5): void {
         p.push()
+            p.scale(this.scale)
             p.translate(0,0,this.realPos.z)
 
             if (this.io1.getValue()) {
@@ -48,7 +49,7 @@ export class ConnectionLine extends Material {
             } else {
                 p.stroke(p.color(disabledColor))
             }
-            p.strokeWeight(this.width)
+            p.strokeWeight(this.width * this.scale)
 
             let inputPos = this.io2.getConnectionPointPosition()
             let outputPos = this.io1.getConnectionPointPosition()

@@ -8,6 +8,7 @@ export abstract class Material implements Drawable, Clickable {
 
     // private isEnabled: boolean = true
     private _pointOfOrigin: P5.Vector = new P5.Vector(0, 0)
+    private _scale = 1
 
     // // se isto tiver ativado, cliques feitos em submateriais não serão passados para o material pai
     // private overrideChildren: boolean = false 
@@ -125,4 +126,11 @@ export abstract class Material implements Drawable, Clickable {
         this._pointOfOrigin = value;
     }
 
+    public get scale(){
+        return this._scale
+    }
+
+    public set scale(scale: number){
+        this._scale = scale
+    }
 }

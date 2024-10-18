@@ -11,17 +11,12 @@ export class UI extends MaterialGroup {
         let titleMaterial = new RotatingTitle(
             p, 
             // -100 para ter certeza de que ele estará no fundo
-            p.createVector(-p.width / 2 + 85, -p.height / 2 + 100, -100), // posição
+            p.createVector(-p.width / 2.5, -p.height / 2.5, -100), // posição
             title, // texto
             true // rainbowMode
         )
 
         this.addChild(titleMaterial)
-    }
-
-    windowResized(p: P5) {
-        // throw new Error("Method not implemented.");
-        // TODO
     }
 
 }

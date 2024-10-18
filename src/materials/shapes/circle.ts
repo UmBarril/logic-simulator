@@ -16,6 +16,7 @@ export class Circle extends Material {
 
     draw(p: P5){
         p.push()
+        p.scale(this.scale)
         p.translate(0,0,this.realPos.z)
         p.fill(p.color(this.color))
         p.ellipse(this.realPos.x, this.realPos.y, this.rad*2)

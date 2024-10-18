@@ -3,6 +3,8 @@ import { Material } from "../interfaces/material";
 
 export class RotatingTitle extends Material {
     private graphics: P5.Graphics;
+    width = 200
+    height = 200
 
     constructor(
         p: P5, 
@@ -12,20 +14,24 @@ export class RotatingTitle extends Material {
         private textSize = 50
     ) {
         super(pos)
-        this.graphics = p.createGraphics(400,300);
+        this.graphics = p.createGraphics(this.width * this.scale, this.height * this.scale);
         this.graphics.clear()
         this.graphics.textAlign(p.CENTER);
-        this.graphics.textSize(this.textSize);
     }
 
     draw(p: P5): void {
+
+        let scaledWidth = this.width * this.scale
+        let scaledHeight = this.height * this.scale
+
         p.push()
 
         p.translate(P5.Vector.add(this.pos, this.pointOfOrigin)); 
-        p.strokeWeight(0)
+        // p.scale(this.scale)
+        // p.strokeWeight(0)
 
         // lógica para inverter o texto quando ele estiver do lado errado
-        let rot = p.frameCount * 0.01
+        let rot = p.frameCount * 0.01 
         p.rotateY((rot % p.PI) - (p.PI / 2));
 
         if (this.rainbowMode) {
@@ -39,9 +45,13 @@ export class RotatingTitle extends Material {
         }
 
         // todo: remover esse tamanho hardcoded
-        this.graphics.text(this._title, 100, 20, 200, 200);
+        this.graphics.textAlign(p.CENTER, p.CENTER);
+        this.graphics.textSize(this.textSize * this.scale);
+        this.graphics.text(this._title, 0, 0, scaledWidth, scaledHeight);
+
         p.texture(this.graphics);
-        p.plane(150,150)
+
+        p.plane(scaledWidth, scaledHeight)
 
         p.pop()
     }

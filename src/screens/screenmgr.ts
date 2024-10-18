@@ -33,11 +33,11 @@ export class ScreenManager  {
         this.currentScreen?.draw(p)
     }
 
-    windowResized(p: P5) { 
+    windowResized(p: P5, newScale: number) { 
         if (!this.isCurrentScreenValid()) {
             return;
         }
-        this.currentScreen?.windowResized()
+        this.currentScreen?.windowResized(newScale)
     }
 
     mouseWheel(e: MouseEvent): void {
