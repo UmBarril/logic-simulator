@@ -18,7 +18,7 @@ import { IOState } from "../../../logic/iostate";
  * O botão pode ser clicado e arrastado para criar uma linha.
  * Para usar este material, veja {@link OutputMaterial} e {@link InputMaterial}
  */
-export class IOMaterial extends MaterialGroup implements KeyboardListener, ConnectionPoint {
+export abstract class IOMaterial extends MaterialGroup implements KeyboardListener, ConnectionPoint {
 
     private readonly bridgeColor = [255, 5, 100]
     // fazer essas cores serem configuráveis e compartilhadas entre os connectionpoints/lines
@@ -51,7 +51,7 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener, Conne
     protected constructor(
         p: P5,
         pos: P5.Vector, 
-        private state: IOState,
+        name: string,
         connectionManager: ConnectionManager,
         private type: PointType,
         buttonClickDisabled: boolean
@@ -124,6 +124,18 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener, Conne
         this.updatePositions(p, this.currentDirection) // seta a direção padrão
     }
 
+    connect(connectionPoint: ConnectionPoint): void {
+        this.connectedIO = connectionPoint.getState()
+    }
+
+    disconnect(connectionPoint: ConnectionPoint): void {
+        this.state.disconnect(connectionPoint.getState())
+    }
+
+    getConnectedConnectionPoint(): ConnectionPoint | null {
+        throw new Error('Method not implemented.');
+    }
+
     getPointType(): PointType {
         return this.type;
     }
@@ -136,6 +148,7 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener, Conne
     // ConnectionPoint
     public updateValue(value: boolean) {
         this.state.setValue(value)
+        console.log(this.state.getName(), value)
         if (this.state.getValue()){
             this.button.setColor(this.enabledColor)
         } else {  

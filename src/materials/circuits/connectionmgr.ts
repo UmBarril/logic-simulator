@@ -46,20 +46,31 @@ export class ConnectionManager extends Material {
         // conectar
         let connected = false
         if (io.getPointType() == PointType.OUTPUT) {
-            // conectar input a output
             if (this.selectedIO.getPointType() == PointType.INPUT) {
+                // conectando
+                io.connect(this.selectedIO)
+                this.selectedIO.connect(io)
+
+                // adicionando para ser desenhado
                 let line = new ConnectionLine(io, this.selectedIO)
+
                 this.outputs.set(io, line)
                 this.inputs.set(this.selectedIO, line)
                 // io.connect(this.selectedIO)
                 connected = true
             }
-        } else { // se não, é um input
+        }
+        else // se não, é um input
+        { 
             if (this.selectedIO.getPointType() == PointType.OUTPUT) {
-                let line = new ConnectionLine(io, this.selectedIO)
+                // conectando
+                io.connect(this.selectedIO)
+                this.selectedIO.connect(io)
+
+                // adicionando para ser desenhado
+                let line = new ConnectionLine(this.selectedIO, io)
                 this.outputs.set(io, line)
                 this.inputs.set(this.selectedIO, line)
-                // io.connect(this.selectedIO)
                 connected = true
             }
         }

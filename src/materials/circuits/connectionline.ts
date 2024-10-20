@@ -1,8 +1,7 @@
 import P5 from "p5";
 import { Material } from "../interfaces/material";
 import { Modifiers } from "../modifiers";
-import { getMousePos } from "../../util/util";
-import { ConnectionPoint } from "./connectionpoint";
+import { ConnectionPoint, PointType } from "./connectionpoint";
 
 export class ConnectionLine extends Material {
 
@@ -16,6 +15,12 @@ export class ConnectionLine extends Material {
         private io2: ConnectionPoint,
         modifiers: Modifiers<ConnectionLine> = new Modifiers()
     ) { 
+        if (io2.getPointType() != PointType.INPUT) {
+            console.log("io2 is not an input")
+        }
+        if (io1.getPointType() != PointType.OUTPUT) {
+            console.log("io1 is not an output")
+        }
         super(
             new P5.Vector(0,0,1),
             modifiers.addOnClick((self, pos) => {
@@ -38,6 +43,7 @@ export class ConnectionLine extends Material {
         p.push()
             p.translate(0,0,this.realPos.z)
 
+            // console.log(this.io1.getValue())
             if (this.io1.getValue()) {
                 p.stroke(p.color(this.enabledColor))
             } else {
@@ -45,20 +51,9 @@ export class ConnectionLine extends Material {
             }
             p.strokeWeight(this.width)
 
-            // ainda não está conectado com outro io, mover segundo o mouse
-            if (this.io1 == null) {
-                let mouse = getMousePos(p)
-                let io2Pos = this.io2.getConnectionPointPosition()
-                p.line(io2Pos.x, io2Pos.y, mouse.x, mouse.y)
-            } else if (this.io2 == null) {
-                let mouse = getMousePos(p)
-                let io1Pos = this.io1.getConnectionPointPosition()
-                p.line(io1Pos.x, io1Pos.y, mouse.x, mouse.y)
-            } else {
-                let io1Pos = this.io1.getConnectionPointPosition()
-                let io2Pos = this.io2.getConnectionPointPosition()
-                p.line(io1Pos.x, io1Pos.y, io2Pos.x, io2Pos.y)
-            }
+            let io1Pos = this.io1.getConnectionPointPosition()
+            let io2Pos = this.io2.getConnectionPointPosition()
+            p.line(io1Pos.x, io1Pos.y, io2Pos.x, io2Pos.y)
         p.pop()
     }
 

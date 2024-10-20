@@ -21,8 +21,12 @@ export class OutputState extends IOState {
         }
     }
 
-    connect(input: InputState) {
-        this._connectedInput = input
-        this._connectedInput.setValue(this.getValue())
+    override connect(io: IOState) {
+        if (io instanceof InputState) {
+            this._connectedInput = io
+            this._connectedInput.setValue(this.getValue())
+        } else {
+            throw new Error("Method not implemented.");
+        }
     }
 }

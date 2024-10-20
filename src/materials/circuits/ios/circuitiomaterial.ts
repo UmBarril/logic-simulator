@@ -26,6 +26,22 @@ export class CircuitIOMaterial extends Circle implements ConnectionPoint {
         )
     }
 
+    getState(): IOState {
+        return this.state
+    }
+
+    connect(connectionPoint: ConnectionPoint): void {
+        this.state.connect(connectionPoint.getState())
+    }
+
+    disconnect(connectionPoint: ConnectionPoint): void {
+        this.state.disconnect(connectionPoint.getState())
+    }
+
+    getConnectedConnectionPoint(): ConnectionPoint | null {
+        throw new Error('Method not implemented.');
+    }
+
     getPointType(): PointType {
         return this.type;
     }
