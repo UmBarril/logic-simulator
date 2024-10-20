@@ -35,14 +35,14 @@ export class Menu extends MaterialGroup {
     drawButton(button: {label: string, y: number, textbox: TextBox}, p: P5) {
         const buttonWidth = 200
         const buttonHeight = 50
-        const buttonX = this.pos.x
+        const buttonX = this.pos.x - 150
         const buttonY = this.pos.y + button.y
 
         // Cor
         p.fill(0, 0, 170)
         p.rect(buttonX, buttonY, buttonWidth, buttonHeight, 10) // Botão com bordas arredondadas
-
-        button.textbox.pos = this.pos.copy().add(435, button.y + 40)
+        
+        button.textbox.pos = this.pos.copy().add(290, button.y + 40)
         button.textbox.draw(p)
     }
     // Verifica se um clique ocorre dentro dos limites de um botão
