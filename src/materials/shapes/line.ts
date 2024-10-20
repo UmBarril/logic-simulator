@@ -11,25 +11,40 @@ export class Line extends Material {
         private color: P5.Color,
         modifiers: Modifiers<Line> = new Modifiers()
     ) {
-        super(start, modifiers)
+        // position não importa aqui
+        super(new P5.Vector(0, 0, -1), modifiers)
     }
     
+    setStart(start: P5.Vector): void {
+        this.start = start
+    }
+
+    setEnd(end: P5.Vector): void {
+        this.end = end
+    }
+
     draw(p: P5): void {
         p.push()
-        p.translate(0,0,this.modifiers.zIndex)
+
+        p.translate(0,0,this.pos.z)
         p.stroke(this.color)
         p.strokeWeight(this.width)
+
+        let start = this.start
+        let end = this.end
+
         p.line(
-            this.pointOfOrigin.x + this.start.x,
-            this.pointOfOrigin.y + this.start.y,
-            this.pointOfOrigin.x + this.end.x,
-            this.pointOfOrigin.y + this.end.y)
+            this.pointOfOrigin.x + start.x,
+            this.pointOfOrigin.y + start.y,
+            this.pointOfOrigin.x + end.x,
+            this.pointOfOrigin.y + end.y)
         p.pop()
     }
 
-    /** @todo */
     isInside(pos: P5.Vector): boolean {
-        return false;
+        let start = this.start
+        let end = this.end
+        return pos.dist(start) + pos.dist(end) <= start.dist(end) + this.width;
     }
 
 }

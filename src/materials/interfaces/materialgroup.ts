@@ -8,7 +8,7 @@ export abstract class MaterialGroup extends Material {
     
     constructor(
         pos: P5.Vector,
-        modifiers = new Modifiers()
+        modifiers = new Modifiers<MaterialGroup>()
     ) { 
         super(pos, modifiers)
     }

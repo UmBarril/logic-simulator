@@ -1,24 +1,24 @@
 
-export class IOState {
+export abstract class IOState {
     
     constructor(
-        private _value: boolean,
-        private _name: string
+        private _name: string,
+        private _value: boolean = false,
     ) { }
 
-    setValue(value: boolean) {
+    public set value(value: boolean) {
         this._value = value
     }
 
-    getValue() {
+    public get value() {
         return this._value
     }
 
-    getName() {
+    public get name() {
         return this._name
     }
 
-    setName(name: string) {
+    public set name(name: string) {
         this._name = name
     }
 }

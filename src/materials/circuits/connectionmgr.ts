@@ -1,10 +1,9 @@
 import P5 from "p5"
 import { ConnectionLine } from "./connectionline";
-import { IOMaterial } from "./iomaterial";
 import { Material } from "../interfaces/material";
-import { Input } from "../../logic/input";
-import { Output } from "../../logic/output";
 import { Vector } from "p5";
+import { ConnectionPoint, PointType } from "./connectionpoint";
+import { UnfinishedConnectionLine } from "./unfinishedline";
 
 /**
  * ConnectionManager é responsável por gerenciar as conexões 
@@ -15,8 +14,11 @@ import { Vector } from "p5";
  */
 export class ConnectionManager extends Material {
     
-    private selectedIO: IOMaterial | null = null
-    private connectionLines = new Map<IOMaterial, ConnectionLine>() 
+    private selectedIO: ConnectionPoint | null = null
+    private unfinishedConnectionLine: UnfinishedConnectionLine | null = null
+
+    private outputs = new Map<ConnectionPoint, ConnectionLine>() 
+    private inputs = new Map<ConnectionPoint, ConnectionLine>() 
 
     constructor() { 
         super(new P5.Vector)
@@ -24,58 +26,78 @@ export class ConnectionManager extends Material {
 
     /**
      * Seleciona um output.
+     * mostrar visualmente que o IO foi selecionado (talvez muandar uma notificacao) @todo
      * @param output 
      */
-    select(io: IOMaterial) {
+    select(io: ConnectionPoint) {
         // disselecionar se clicar no mesmo
         if (this.selectedIO == null) {
             this.selectedIO = io
-
-            let line = new ConnectionLine(this, io, io.getValue())
-            this.connectionLines.set(io, line)
-            // SceneManager.currentScene.add(this.connectionLine)
+            this.unfinishedConnectionLine = new UnfinishedConnectionLine(this.selectedIO)
             return
         }
 
+        // se tiver clicado no mesmo, desselecionar
         if (this.selectedIO == io) {
-            this.selectedIO = null
-            this.connectionLines.delete(io)
+            this.unselect()
             return
         }
 
         // conectar
-        if (this.selectedIO instanceof Output) {
-            // conectar output a input
-            if (io instanceof Input) {
-                this.selectedIO.connect(io)
-            }
-        } else if (io instanceof Output) {
+        let connected = false
+        if (io.getPointType() == PointType.OUTPUT) {
             // conectar input a output
-            if (this.selectedIO instanceof Input) {
-                io.connect(this.selectedIO)
+            if (this.selectedIO.getPointType() == PointType.INPUT) {
+                let line = new ConnectionLine(io, this.selectedIO)
+                this.outputs.set(io, line)
+                this.inputs.set(this.selectedIO, line)
+                // io.connect(this.selectedIO)
+                connected = true
+            }
+        } else { // se não, é um input
+            if (this.selectedIO.getPointType() == PointType.OUTPUT) {
+                let line = new ConnectionLine(io, this.selectedIO)
+                this.outputs.set(io, line)
+                this.inputs.set(this.selectedIO, line)
+                // io.connect(this.selectedIO)
+                connected = true
             }
         }
 
-        this.selectedIO = io
-        // TODO: mostrar visualmente que o IO foi selecionado (talvez muandar uma notificacao)
-    }
-
-    unselectIfSelected() {
-        if (this.selectedIO != null) {
-            this.connectionLines.delete(this.selectedIO)
-            this.selectedIO = null
+        if (!connected) {
+            return
         }
+        this.unselect()
     }
 
-    draw(p: P5): void { 
+    /**
+     * Desseleciona o IO selecionado no momento.
+     */
+    unselect() {
+        this.selectedIO = null
+        this.unfinishedConnectionLine = null
+    }
+
+    removeLine(line: ConnectionLine) {
+        throw new Error('Method not implemented.')
+    }
+
+    removeLineWith(point: ConnectionPoint) {
+        throw new Error('Method not implemented.')
+    }
+
+    // não sei se gosto do connection manager desenhando as linhas assim, as tudo bem
+    override draw(p: P5): void { 
         // Desenhando as linhas manualmente em vez de colorcar elas como filhos.
         // Não gosto muito de fazer isso pois estou repetindo código.
         // Mas dessa maneira tenho mais controle das linhas nessa classe.
         // TODO: melhorar
-        this.connectionLines.forEach(line => line.draw(p))
+        this.unfinishedConnectionLine?.draw(p)
+        this.outputs.forEach(line => line.draw(p))
     }
 
-    isInside(pos: Vector): boolean {
+    // isIside não faz sentido para o ConnectionManager
+    override isInside(pos: Vector): boolean {
         return false
     }
 }

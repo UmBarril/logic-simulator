@@ -3,7 +3,12 @@ import { Modifiers } from "../materials/modifiers"
 import { Circle } from "../materials/shapes/circle"
 import { randomPos } from "../util/util"
 import { Workspace } from "../screens/workspace"
-import { IOMaterial } from "../materials/circuits/iomaterial"
+import { CircuitMaterial } from "../materials/circuits/circuitmaterial"
+import { AndGate } from "../logic/basic-circuits/and"
+import { OutputState } from "../logic/outputstate"
+import { OutputMaterial } from "../materials/circuits/ios/outputmaterial"
+import { InputMaterial } from "../materials/circuits/ios/inputmaterial"
+import { InputState } from "../logic/inputstate"
 
 export class TestingWorkspace extends Workspace {
 
@@ -15,18 +20,27 @@ export class TestingWorkspace extends Workspace {
         let circle = new Circle(
             p.createVector(0, 0),
             30,
-            p.color(255, 0, 0),
+            [255, 0, 0],
             new Modifiers<Circle>().addOnClick((m) => {
                 m.pos = randomPos(p)
                 return false
             })
         )
 
-        let om = new IOMaterial(p, randomPos(p), this.connectionManager)
+        let output = new OutputState("output")
+        let om = new OutputMaterial(p, randomPos(p), output, this.connectionManager)
 
+        let input = new InputState("input")
+        let im = new InputMaterial(p, randomPos(p), input, this.connectionManager)
+
+        let circuit = new AndGate()
+        let cm = new CircuitMaterial(p, new P5.Vector(0,0), this.connectionManager, circuit)
+
+        this.addChild(im)
         this.addChild(this.connectionManager) // transformar isso em this.add()
         this.addChild(om)
         this.addChild(circle)
+        this.addChild(cm)
     }
 
 }

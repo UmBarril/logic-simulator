@@ -80,7 +80,7 @@ export class Workspace extends MaterialGroup {
     override mouseClicked(p: P5, pos: P5.Vector): boolean {
         let childWasClicked = super.mouseClicked(p, this.posInsideWorkspace(pos))
         if (!childWasClicked){
-            this.connectionManager.unselectIfSelected()   
+            this.connectionManager.unselect()   
         }
         return true
     }

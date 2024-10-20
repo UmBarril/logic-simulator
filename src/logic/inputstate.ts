@@ -1,25 +1,25 @@
 import { Circuit } from "./circuit";
 import { IOState } from "./iostate";
 
-export class Input extends IOState {
+export class InputState extends IOState {
 
     constructor(
         name: string,
-        private _parentCircuit: Circuit
+        private _parentCircuit?: Circuit
     ) { 
-        super(false, name)
+        super(name)
     }
 
     /**
      * Atualiza o valor e avisa o circuito pai.
      * @param value 
      */
-    override setValue(value: boolean) {
-        super.setValue(value)
-        this._parentCircuit.update()
+    override set value(value: boolean) {
+        super.value = value
+        this._parentCircuit?.update()
     }
 
-    getParentCircuit() {
+    public get parentCircuit() {
         return this._parentCircuit
     }
 

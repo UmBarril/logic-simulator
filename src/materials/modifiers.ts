@@ -12,14 +12,12 @@ export class Modifiers<T extends Material> {
     //         onClick: Callback<T> = null,
     //         onMousePressed: Callback<T> = null,
     //         onMouseReleased: Callback<T> = null,
-    //         zIndex: number = 0
     //     }
     // ){
     constructor(
         public onClick: Callback<T> = null,
         public onMousePressed: Callback<T> = null,
         public onMouseReleased: Callback<T> = null,
-        public zIndex: number = 0
     ){
         this.onClick = onClick;
         this.onMousePressed = onMousePressed;
@@ -37,11 +35,6 @@ export class Modifiers<T extends Material> {
 
     addOnMouseReleased(callback: Callback<T>): Modifiers<T> {
         this.onMouseReleased = callback
-        return this
-    }
-
-    addZIndex(zIndex: number): Modifiers<T> {
-        this.zIndex = zIndex
         return this
     }
 }

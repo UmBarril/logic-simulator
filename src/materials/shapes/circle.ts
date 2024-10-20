@@ -3,10 +3,12 @@ import { Material } from "../interfaces/material";
 import { Modifiers } from "../modifiers";
 
 export class Circle extends Material {
+    
+
     constructor(
         pos: P5.Vector,
         private rad: number = 20,
-        private color: P5.Color, // eu quero por uma cor padrão.. mas eu preciso de um p5 para isso
+        private color: number[], // eu quero por uma cor padrão.. mas eu preciso de um p5 para isso
         modifiers: Modifiers<Circle> = new Modifiers()
     ){
         super(pos, modifiers)
@@ -14,13 +16,13 @@ export class Circle extends Material {
 
     draw(p: P5){
         p.push()
-        p.translate(0,0,this.modifiers.zIndex)
-        p.fill(this.color)
+        p.translate(0,0,this.realPos.z)
+        p.fill(p.color(this.color))
         p.ellipse(this.realPos.x, this.realPos.y, this.rad*2)
         p.pop()
     }
 
-    setColor(color: P5.Color){
+    setColor(color: number[]){
         this.color = color
     }
 

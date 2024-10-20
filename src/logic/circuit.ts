@@ -1,7 +1,7 @@
 import { GenericCircuitBehavior } from "./basic-circuits/generic"
 import { CircuitBehavior } from "./circuitbehavior"
-import { Input } from "./input"
-import { Output } from "./output"
+import { InputState } from "./inputstate"
+import { OutputState } from "./outputstate"
 
 /**
  * Um Circuit é uma coleção de portas lógicas (que são outros circuitos) e conexões.
@@ -13,10 +13,10 @@ import { Output } from "./output"
  */
 export class Circuit {
     
-    private _outputs: Output[] = []
-    private _inputs: Input[] = []
+    private _outputs: OutputState[] = []
+    private _inputs: InputState[] = []
 
-    private _inputMirrors: Output[] = [] // espelham o valor dos inputs
+    private _inputMirrors: OutputState[] = [] // espelham o valor dos inputs
     // private _internalCircuits: Circuit[] = [] // circuitos que estão dentro deste circuito
 
     private behavior: CircuitBehavior = new GenericCircuitBehavior()
@@ -35,31 +35,30 @@ export class Circuit {
         this.behavior = behavior
     }
         
-    addOutput(output: Output) {
+    addOutput(output: OutputState) {
         this._outputs.push(output)
     }
 
-    getOutput(index: number): Output {
+    getOutput(index: number): OutputState {
         return this._outputs[index]
     }
 
-    getOutputs(): Output[] {
+    getOutputs(): OutputState[] {
         // todo: talvez fazer uma copia da lista antes de retornar
         return this._outputs
     }
 
-    addInput(input: Input) {
+    addInput(input: InputState) {
         this._inputs.push(input)
-        this._inputMirrors.push(new Output(input.getName()))
+        this._inputMirrors.push(new OutputState(input.name))
     }
 
-    getInputs(): Input[] {
+    getInputs(): InputState[] {
         // todo: talvez fazer uma copia da lista antes de retornar
         return this._inputs
     }
 
-    getInput(index: number): Input {
+    getInput(index: number): InputState {
         return this._inputs[index]
     }
-
 }

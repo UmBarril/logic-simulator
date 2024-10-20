@@ -1,9 +1,9 @@
 import { CircuitBehavior } from "../circuitbehavior"
-import { Input } from "../input"
-import { Output } from "../output"
+import { InputState } from "../inputstate"
+import { OutputState } from "../outputstate"
 
 export class GenericCircuitBehavior implements CircuitBehavior {
-    update(inputs: Input[], outputs: Output[]): void {
+    update(inputs: InputState[], outputs: OutputState[]): void {
         inputs.forEach((input, index) => {
             // this._inputMirrors[index].setValue(input.getValue())
         })

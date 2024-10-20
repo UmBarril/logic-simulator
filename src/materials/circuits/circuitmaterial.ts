@@ -1,24 +1,24 @@
 import P5 from "p5";
 import { Circuit } from "../../logic/circuit";
 import { Directions } from "../../util/direction";
-import { Material } from "../interfaces/material";
-import { Circle } from "../shapes/circle";
 import { Modifiers } from "../modifiers";
 import { ConnectionManager } from "./connectionmgr";
 import { MaterialGroup } from "../interfaces/materialgroup";
+import { Rectangle } from "../shapes/rectangle";
+import { getMousePos } from "../../util/util";
+import { TextBox } from "../ui/textbox";
+import { CircuitOutputMaterial } from "./ios/circuitoutputmateial";
+import { CircuitInputMaterial } from "./ios/circuitinputmaterial";
 
 export class CircuitMaterial extends MaterialGroup {
 
     private _isDragging: boolean = false
     private direction: Directions = Directions.RIGHT
 
-    private dimensions = new P5.Vector(100, 100)
+    private dimensions: P5.Vector 
 
-    private readonly ioOffset = 5
     private readonly ioCircleRad = 10
-
-    private inputs: Circle[] = []
-    private outputs: Circle[] = []
+    private readonly textSize = 22
 
     constructor(
         p: P5,
@@ -28,78 +28,84 @@ export class CircuitMaterial extends MaterialGroup {
     ) {
         super(pos)
 
-        let iOffset = this.ioOffset
-        this.circuit.getInputs().forEach(_ => {
-            // TODO: trocar esse Circle por um IOMaterial ou algo do tipo
-            //      talvez criar uma nova classe similar a IOMaterial, mas para ser usada em circuitos
-            let input = new Circle(
-                new P5.Vector(0, iOffset),
+        let inputs = this.circuit.getInputs()
+        let outputs = this.circuit.getOutputs()
+
+        let max = Math.max(inputs.length, outputs.length)
+
+        // espaçamento entre o retângulo e os círculos
+        let rectPadding = this.ioCircleRad
+        // calcula a largura do retângulo baseado no tamanho do nome do circuito
+        let rectWidth = circuit.name.length * this.textSize
+        // calcula a altura do retângulo baseado no número de inputs ou outputs
+        let rectheight = max * this.ioCircleRad * 4
+
+        // calculando o espaçamento entre os círculos, baseado na altura do retângulo 
+        let inputCircleSpacing = rectheight / inputs.length
+        let inputOffset = rectPadding + this.ioCircleRad
+        inputs.forEach(i => {
+            inputOffset += inputCircleSpacing
+
+            let inputMaterial = new CircuitInputMaterial(
+                i,
+                connectionManager,
+                new P5.Vector(0, inputOffset, 1),
                 this.ioCircleRad,
-                p.color(0, 255, 0),
-                new Modifiers<Circle>().addOnClick((m) => {
-                    // connectionManager.select(m.input) // @todo
-                    return true
-                })
             )
-            this.addChild(input)
-            iOffset += this.ioOffset
+            this.addChild(inputMaterial)
         })
 
-        let oOffset = this.ioOffset
-        this.circuit.getOutputs().forEach(_ => {
-            let input = new Circle(
-                // mesma coisa que o mais acima
-                new P5.Vector(this.dimensions.x, oOffset),
+        // calculando o espaçamento entre os círculos, baseado na altura do retângulo 
+        let outputCircleSpacing = rectheight / (outputs.length + 1)
+        let outputOffset = rectPadding 
+        outputs.forEach(o => {
+            outputOffset += outputCircleSpacing
+
+            let outputMaterial = new CircuitOutputMaterial(
+                o,
+                connectionManager,
+                new P5.Vector(rectWidth, outputOffset, 1),
                 this.ioCircleRad,
-                p.color(0, 255, 0), // @todo fazer isso trocar de cor
-                new Modifiers<Circle>().addOnClick((m) => {
-                    // connectionManager.select(m.input) // @todo
-                    return true
-                })
             )
-            this.addChild(input)
-            oOffset += this.ioOffset
+            this.addChild(outputMaterial)
         })
 
+        // agora, definimos o retângulo 
+        this.dimensions = new P5.Vector(rectWidth, rectheight + rectPadding * 2)
+        let rect = new Rectangle(
+            p.createVector(0, 0),
+            this.dimensions,
+            p.color(255, 255, 255),
+            new Modifiers<Rectangle>()
+                .addOnMousePressed((m) => {
+                    this._isDragging = true
+                    return true
+                })
+                .addOnMouseReleased((m) => {
+                    this._isDragging = false
+                    return true
+                })
+        )
+        this.addChild(rect)
+
+        // adiciona o label com o nome do circuito
+        let text = new TextBox(
+            p,
+            p.createVector(0, 0),
+            circuit.name,
+            this.textSize
+        )
+        this.addChild(text)
     }
 
-    draw(p: P5){
-        p.push()
-
-            p.rect(this.pos.x, this.pos.y, this.dimensions.x, this.dimensions.y)
-
-            p.push()
-                p.fill(0, 255, 0)
-            p.pop()
-
-        p.pop()
-    }
-
-    update(p: P5){
-        // A posição do mouse é relativa ao canto superior esquerdo do canvas
-        // enquanto a posição do retângulo é relativa ao canto superior esquerdo do retângulo
-        let mouse = p.createVector(p.mouseX, p.mouseY)
-
-        // Calcula a distância do mouse ao centro do retângulo
-        let dis_x = Math.abs(mouse.x - (this.pos.x + (this.dimensions.x / 2)))
-        let dis_y = Math.abs(mouse.y - (this.pos.y + (this.dimensions.y / 2)))
-
-        if (!this._isDragging)  {
-            let isInside = 
-                dis_x < this.dimensions.x / 2 && 
-                dis_y < this.dimensions.y / 2
-            if (isInside && p.mouseIsPressed){
-                this._isDragging = true
-            }
-        } else {
-            if (!p.mouseIsPressed){
-                this._isDragging = false
-            }
-            this.pos = mouse.add(p.createVector(-this.dimensions.x / 2, -this.dimensions.y / 2))
+    override draw(p: P5): void {
+        super.draw(p)
+        if (this._isDragging) {
+            this.pos = getMousePos(p)
         }
     }
 
-    isInside(pos: P5.Vector): boolean {
+    override isInside(pos: P5.Vector): boolean {
         let rectMiddle = this.realPos.copy().add(this.dimensions.copy().div(2))
         let dis_x = Math.abs(pos.x - rectMiddle.x)
         let dis_y = Math.abs(pos.y - rectMiddle.y)

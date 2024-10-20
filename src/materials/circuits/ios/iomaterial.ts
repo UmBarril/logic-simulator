@@ -1,23 +1,27 @@
 import P5 from "p5";
-import { Directions } from "../../util/direction";
-import { getMousePos } from "../../util/util";
-import { KeyboardListener } from "../interfaces/keyboardlistener";
-import { rotateKey as rotateClockWiseKey } from "../../util/settings";
-import { Rectangle } from "../shapes/rectangle";
-import { Circle } from "../shapes/circle";
-import { Line } from "../shapes/line";
-import { TextBox } from "../ui/textbox";
-import { Modifiers } from "../modifiers";
-import { ConnectionManager } from "./connectionmgr";
-import { MaterialGroup } from "../interfaces/materialgroup";
+import { Directions } from "../../../util/direction";
+import { getMousePos } from "../../../util/util";
+import { KeyboardListener } from "../../interfaces/keyboardlistener";
+import { rotateKey as rotateClockWiseKey } from "../../../util/settings";
+import { Rectangle } from "../../shapes/rectangle";
+import { Circle } from "../../shapes/circle";
+import { Line } from "../../shapes/line";
+import { TextBox } from "../../ui/textbox";
+import { Modifiers } from "../../modifiers";
+import { ConnectionManager } from "../connectionmgr";
+import { MaterialGroup } from "../../interfaces/materialgroup";
+import { ConnectionPoint, PointType } from "../connectionpoint";
+import { IOState } from "../../../logic/iostate";
 
 /**
  * Essa classe representa um botão de saída de um circuito lógico.
  * O botão pode ser clicado e arrastado para criar uma linha.
+ * Para usar este material, veja {@link OutputMaterial} e {@link InputMaterial}
  */
-export class IOMaterial extends MaterialGroup implements KeyboardListener {
+export class IOMaterial extends MaterialGroup implements KeyboardListener, ConnectionPoint {
 
     private readonly bridgeColor = [255, 5, 100]
+    // fazer essas cores serem configuráveis e compartilhadas entre os connectionpoints/lines
     private readonly enabledColor = [255, 255, 0]
     private readonly disabledColor = [255, 0, 255]
 
@@ -39,15 +43,17 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener {
     private readonly label: TextBox
     
     private currentDirection: Directions = Directions.UP;
-    private value: boolean = false; // valor do output
     private isMoving: boolean = false;
+
+    // TODO: implementar uma maneira genérica para isso
     private onMoving = () => { };
 
-    constructor(
+    protected constructor(
         p: P5,
         pos: P5.Vector, 
-        // output: Output,
-        connectionManager: ConnectionManager
+        private state: IOState,
+        connectionManager: ConnectionManager,
+        private type: PointType
     ) {
         super(pos)
 
@@ -70,11 +76,12 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener {
         this.button = new Circle(
             p.createVector(0, 0),
             this.buttonRad,
-            p.color(255, 255, 0), // essa cor vai ser mudada depois
+            [255, 255, 0], // essa cor vai ser mudada depois
             // nao funciona para desativar pois ele apenas detecta quando clica dentro dele
             // usar connection manager depois para desativar (e ativar tbm talvez)
             new Modifiers<Circle>().addOnClick((circle) => {
-                this.setValue(p, !this.value)
+                this.updateValue(!this.getValue())
+                console.log(this.getValue())
                 return true
             })
         )
@@ -88,7 +95,6 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener {
             p.createVector(0, -this.connectionPointDistance),
             10,
             p.color(this.bridgeColor),
-            new Modifiers<Line>().addZIndex(-1)
         )
 
         this.connectionPoint = new Rectangle(
@@ -103,11 +109,9 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener {
 
         this.label = new TextBox(
             p,
-            p.createVector(0, this.labelDistance),
-            "Output", // mudar
+            p.createVector(0, this.labelDistance /*, -1 */),
+            state.name, // mudar
             // 50,
-            // new Modifiers<TextBox>()
-                // .addZIndex(1)
         )
         
         this.addChild(this.dragPad)
@@ -119,24 +123,31 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener {
         this.updatePositions(p, this.currentDirection) // seta a direção padrão
     }
 
-    public getValue(): boolean {
-        return this.value
+    getPointType(): PointType {
+        return this.type;
     }
 
-    // NOTA: talvez isso possa ser um valor inteiro no futuro...
-    // NOTA2: EU REALMENTE NÃO GOSTO que essa função precise receber uma instância de P5
-    //        RESOLVER ISSO DEPOIS.
-    public setValue(p: P5, value: boolean) {
-        this.value = value
-        if (this.value){
-            this.button.setColor(p.color(this.enabledColor))
+    // ConnectionPoint
+    public getValue(): boolean {
+        return this.state.value
+    }
+
+    // ConnectionPoint
+    public updateValue(value: boolean) {
+        this.state.value = value
+        if (this.state.value){
+            this.button.setColor(this.enabledColor)
         } else {  
-            this.button.setColor(p.color(this.disabledColor))
+            this.button.setColor(this.disabledColor)
         }
     }
 
-    public getConnectionPointPos(): P5.Vector {
-        return P5.Vector.add(this.connectionPoint.realPos, new P5.Vector(this.connectionPointWidth / 2, this.connectionPointWidth / 2))
+    // ConnectionPoint
+    public getConnectionPointPosition(): P5.Vector {
+        return P5.Vector.add(
+            this.connectionPoint.realPos,
+            new P5.Vector(this.connectionPointWidth / 2, this.connectionPointWidth / 2)
+        )
     }
 
     private updatePositions(p: P5, direction: Directions){
@@ -205,6 +216,7 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener {
     }
 
     // aqui o draw funciona mais como um update
+    // Material
     override draw(p: P5): void {
         super.draw(p)
 
@@ -214,10 +226,10 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener {
         }
     }
 
-    // keyboardlistener interface
+    // KeyboardListener interface
     keyReleased(p: P5, key: string): void { }
 
-    // keyboardlistener interface
+    // KeyboardListener interface
     keyPressed(p: P5, key: string): void {
         if (
             key == rotateClockWiseKey &&

@@ -1,6 +1,6 @@
-import { Input } from "./input";
-import { Output } from "./output";
+import { InputState } from "./inputstate";
+import { OutputState } from "./outputstate";
 
 export interface CircuitBehavior {
-    update(inputs: Input[], outputs: Output[]): void;
+    update(inputs: InputState[], outputs: OutputState[]): void;
 }
