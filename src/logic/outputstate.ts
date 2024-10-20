@@ -13,16 +13,16 @@ export class OutputState extends IOState {
      * Atualiza o valor e atualiza o input conectado a ele.
      * @param value 
      */
-    override set value(value: boolean) {
-        super.value = value
+    override setValue(value: boolean) {
+        super.setValue(value)
 
         if (this._connectedInput != null) {
-            this._connectedInput.value = value
+            this._connectedInput.setValue(value)
         }
     }
 
     connect(input: InputState) {
         this._connectedInput = input
-        this._connectedInput.value = this.value
+        this._connectedInput.setValue(this.getValue())
     }
 }

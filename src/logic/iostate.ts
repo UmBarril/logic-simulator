@@ -6,19 +6,19 @@ export abstract class IOState {
         private _value: boolean = false,
     ) { }
 
-    public set value(value: boolean) {
+    public setValue(value: boolean) {
         this._value = value
     }
 
-    public get value() {
+    public getValue() {
         return this._value
     }
 
-    public get name() {
+    public getName() {
         return this._name
     }
 
-    public set name(name: string) {
+    public setName(name: string) {
         this._name = name
     }
 }

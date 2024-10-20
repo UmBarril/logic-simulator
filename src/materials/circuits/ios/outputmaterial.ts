@@ -12,7 +12,7 @@ export class OutputMaterial extends IOMaterial {
         state: OutputState,
         connectionManager: ConnectionManager,
     ) {
-        super(p, pos, state, connectionManager, PointType.OUTPUT)
+        super(p, pos, state, connectionManager, PointType.OUTPUT, false)
     }
 
 }

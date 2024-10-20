@@ -14,8 +14,8 @@ export class InputState extends IOState {
      * Atualiza o valor e avisa o circuito pai.
      * @param value 
      */
-    override set value(value: boolean) {
-        super.value = value
+    override setValue(value: boolean) {
+        super.setValue(value)
         this._parentCircuit?.update()
     }
 

@@ -50,7 +50,7 @@ export class Circuit {
 
     addInput(input: InputState) {
         this._inputs.push(input)
-        this._inputMirrors.push(new OutputState(input.name))
+        this._inputMirrors.push(new OutputState(input.getName()))
     }
 
     getInputs(): InputState[] {

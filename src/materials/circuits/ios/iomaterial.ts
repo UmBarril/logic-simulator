@@ -14,7 +14,7 @@ import { ConnectionPoint, PointType } from "../connectionpoint";
 import { IOState } from "../../../logic/iostate";
 
 /**
- * Essa classe representa um botão de saída de um circuito lógico.
+ * Essa classe representa um saída ou entrada de um circuito lógico.
  * O botão pode ser clicado e arrastado para criar uma linha.
  * Para usar este material, veja {@link OutputMaterial} e {@link InputMaterial}
  */
@@ -53,7 +53,8 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener, Conne
         pos: P5.Vector, 
         private state: IOState,
         connectionManager: ConnectionManager,
-        private type: PointType
+        private type: PointType,
+        buttonClickDisabled: boolean
     ) {
         super(pos)
 
@@ -80,8 +81,8 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener, Conne
             // nao funciona para desativar pois ele apenas detecta quando clica dentro dele
             // usar connection manager depois para desativar (e ativar tbm talvez)
             new Modifiers<Circle>().addOnClick((circle) => {
+                if (buttonClickDisabled) return false
                 this.updateValue(!this.getValue())
-                console.log(this.getValue())
                 return true
             })
         )
@@ -110,7 +111,7 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener, Conne
         this.label = new TextBox(
             p,
             p.createVector(0, this.labelDistance /*, -1 */),
-            state.name, // mudar
+            state.getName(), // mudar
             // 50,
         )
         
@@ -129,13 +130,13 @@ export class IOMaterial extends MaterialGroup implements KeyboardListener, Conne
 
     // ConnectionPoint
     public getValue(): boolean {
-        return this.state.value
+        return this.state.getValue()
     }
 
     // ConnectionPoint
     public updateValue(value: boolean) {
-        this.state.value = value
-        if (this.state.value){
+        this.state.setValue(value)
+        if (this.state.getValue()){
             this.button.setColor(this.enabledColor)
         } else {  
             this.button.setColor(this.disabledColor)

@@ -31,11 +31,11 @@ export class CircuitIOMaterial extends Circle implements ConnectionPoint {
     }
 
     updateValue(value: boolean): void {
-        this.state.value = value
+        this.state.setValue(value)
     }
     
     getValue(): boolean {
-        return this.state.value
+        return this.state.getValue()
     }
 
     getConnectionPointPosition(): P5.Vector {
