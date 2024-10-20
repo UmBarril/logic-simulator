@@ -8,16 +8,16 @@ export class Menu extends MaterialGroup {
 
     constructor(
         p: P5,
-        pos: P5.Vector
+        pos: P5.Vector,
     ) {
         super(pos)
 
         this.buttons = [
-        { label: 'Continuar', y: 100, textbox: new TextBox(p, pos.copy().add(0, 130), 'Continuar', 32)},
-        { label: 'Novo Projeto', y: 160, textbox: new TextBox(p, pos.copy().add(-10, 190), 'Novo Projeto', 32)},
-        { label: 'Carregar Projeto', y: 220, textbox: new TextBox(p, pos.copy().add(-30, 250), 'Carregar Projeto', 32)},
-        { label: 'Lorem Ipsum', y: 280, textbox: new TextBox(p, pos.copy().add(-30, 310), 'Lorem Ipsum', 32)},
-        { label: 'Sair', y: 340, textbox: new TextBox(p, pos.copy().add(27, 370), 'Sair', 32)}
+        { label: 'Continuar', y: 100, textbox: new TextBox(p, pos.copy().add(p.width, p.height), 'Continuar', 24)},
+        { label: 'Novo Projeto', y: 160, textbox: new TextBox(p, pos.copy().add(-10, 190), 'Novo Projeto', 24)},
+        { label: 'Carregar Projeto', y: 220, textbox: new TextBox(p, pos.copy().add(-30, 250), 'Carregar Projeto', 24)},
+        { label: 'Lorem Ipsum', y: 280, textbox: new TextBox(p, pos.copy().add(-30, 310), 'Lorem Ipsum', 24)},
+        { label: 'Sair', y: 340, textbox: new TextBox(p, pos.copy().add(27, 370), 'Sair', 24)}
         ]
 
         for(let button of this.buttons){
@@ -26,8 +26,8 @@ export class Menu extends MaterialGroup {
     }
 
     draw(p: P5): void {
-        p.background(169, 169, 169)
-        p.fill(0)
+        //p.background(169, 169, 169)
+        //p.fill(0)
         p.textSize(32)
         p.textAlign(p.CENTER)
         p.text('Projeto', p.width / 2, 50) // Título
@@ -48,12 +48,6 @@ export class Menu extends MaterialGroup {
         // Cor
         p.fill(0, 0, 170)
         p.rect(buttonX, buttonY, buttonWidth, buttonHeight, 10) // Botão com bordas arredondadas
-
-        // Texto corretamente desenhado no centro dos botões
-        p.fill(255);
-        p.textSize(24);
-        p.textAlign(p.CENTER, p.CENTER);
-        p.text("Texto do Botão", this.pos.x + buttonWidth / 2, this.pos.y + y + buttonHeight / 2);
     }
     // Verifica se um clique ocorre dentro dos limites de um botão
     isInside(pos: P5.Vector): boolean {

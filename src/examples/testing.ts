@@ -13,7 +13,7 @@ export class TestingWorkspace extends Workspace {
     ) {
         super()
 
-        let menu = new Menu(p, p.createVector(-100, -300))
+        let menu = new Menu(p, p.createVector(p.windowWidth * 0.5, p.windowHeight * 0.3))
 
         let circle = new Circle(
             p.createVector(0, 0),
