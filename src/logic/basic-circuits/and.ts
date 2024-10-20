@@ -1,14 +1,12 @@
-import { Circuit } from "../circuit"
-import { InputState } from "../inputstate"
-import { OutputState } from "../outputstate"
+import { Circuit, Input, Output } from "../circuit"
 
 export class AndGate extends Circuit {
     
     constructor() {
         super("And")
-        this.addInput(new InputState("A", this))
-        this.addInput(new InputState("B", this))
-        this.addOutput(new OutputState("X"))
+        this.addInput(new Input("A"))
+        this.addInput(new Input("B"))
+        this.addOutput(new Output("X"))
     }
 
     // public tick() {

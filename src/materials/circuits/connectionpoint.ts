@@ -1,5 +1,4 @@
 import P5 from 'p5'
-import { IOState } from '../../logic/iostate'
 
 export enum PointType {
     INPUT,
@@ -15,10 +14,9 @@ export interface ConnectionPoint {
     connect(connectionPoint: ConnectionPoint): void
 
     /**
-     * Desconecta um ponto de conexão de outro ponto de conexão.
-     * @param connectionPoint 
+     * Desconecta o ponto de outro ponto de conexão.
      */
-    disconnect(connectionPoint: ConnectionPoint): void
+    disconnect(): void
 
     /**
      * Atualiza o valor do ponto de conexão.
@@ -27,9 +25,9 @@ export interface ConnectionPoint {
     updateValue(value: boolean): void
 
     /**
-     * Retorna o estado do ponto de conexão.
+     * Retorna o nome (id) do ponto de conexão.
      */
-    getState(): IOState
+    getName(): string
 
     /**
      * Retorna o valor do ponto de conexão.

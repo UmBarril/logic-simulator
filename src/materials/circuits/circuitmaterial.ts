@@ -47,10 +47,11 @@ export class CircuitMaterial extends MaterialGroup {
             inputOffset += inputCircleSpacing
 
             let inputMaterial = new CircuitInputMaterial(
-                i,
+                i.name,
                 connectionManager,
                 new P5.Vector(0, inputOffset, 1),
                 this.ioCircleRad,
+                circuit
             )
             this.addChild(inputMaterial)
         })
@@ -62,7 +63,7 @@ export class CircuitMaterial extends MaterialGroup {
             outputOffset += outputCircleSpacing
 
             let outputMaterial = new CircuitOutputMaterial(
-                o,
+                o.name,
                 connectionManager,
                 new P5.Vector(rectWidth, outputOffset, 1),
                 this.ioCircleRad,

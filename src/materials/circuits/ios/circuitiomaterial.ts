@@ -3,16 +3,19 @@ import { Modifiers } from "../../modifiers";
 import { Circle } from "../../shapes/circle";
 import { ConnectionManager } from '../connectionmgr';
 import { ConnectionPoint, PointType } from '../connectionpoint';
-import { IOState } from '../../../logic/iostate';
 
 export class CircuitIOMaterial extends Circle implements ConnectionPoint {
 
+    private value: boolean = false
+
+    private _connectedConnectionPoint: ConnectionPoint | null = null
+
     protected constructor(
-        private state: IOState,
+        private name: string,
         connectionManager: ConnectionManager,
         position: P5.Vector,
         private type: PointType,
-        private radius: number = 30,
+        radius: number = 30,
         modifier: Modifiers<Circle> = new Modifiers<Circle>()
     ) {
         super(
@@ -26,20 +29,20 @@ export class CircuitIOMaterial extends Circle implements ConnectionPoint {
         )
     }
 
-    getState(): IOState {
-        return this.state
+    getName(): string {
+        return this.name
     }
 
     connect(connectionPoint: ConnectionPoint): void {
-        this.state.connect(connectionPoint.getState())
+        this._connectedConnectionPoint = connectionPoint
     }
 
-    disconnect(connectionPoint: ConnectionPoint): void {
-        this.state.disconnect(connectionPoint.getState())
+    disconnect(): void {
+        this._connectedConnectionPoint = null
     }
 
     getConnectedConnectionPoint(): ConnectionPoint | null {
-        throw new Error('Method not implemented.');
+        return this._connectedConnectionPoint
     }
 
     getPointType(): PointType {
@@ -47,11 +50,11 @@ export class CircuitIOMaterial extends Circle implements ConnectionPoint {
     }
 
     updateValue(value: boolean): void {
-        this.state.setValue(value)
+        this.value = value
     }
     
     getValue(): boolean {
-        return this.state.getValue()
+        return this.value
     }
 
     getConnectionPointPosition(): P5.Vector {

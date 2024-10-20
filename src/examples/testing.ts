@@ -5,10 +5,8 @@ import { randomPos } from "../util/util"
 import { Workspace } from "../screens/workspace"
 import { CircuitMaterial } from "../materials/circuits/circuitmaterial"
 import { AndGate } from "../logic/basic-circuits/and"
-import { OutputState } from "../logic/outputstate"
 import { OutputMaterial } from "../materials/circuits/ios/outputmaterial"
 import { InputMaterial } from "../materials/circuits/ios/inputmaterial"
-import { InputState } from "../logic/inputstate"
 
 export class TestingWorkspace extends Workspace {
 
@@ -27,11 +25,9 @@ export class TestingWorkspace extends Workspace {
             })
         )
 
-        let output = new OutputState("output")
-        let om = new OutputMaterial(p, randomPos(p), output, this.connectionManager)
+        let om = new OutputMaterial(p, randomPos(p), "output", this.connectionManager)
 
-        let input = new InputState("input")
-        let im = new InputMaterial(p, randomPos(p), input, this.connectionManager)
+        let im = new InputMaterial(p, randomPos(p), "input", this.connectionManager)
 
         let circuit = new AndGate()
         let cm = new CircuitMaterial(p, new P5.Vector(0,0), this.connectionManager, circuit)

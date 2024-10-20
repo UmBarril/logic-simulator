@@ -1,13 +1,11 @@
-import { Circuit } from "../circuit";
-import { InputState } from "../inputstate";
-import { OutputState } from "../outputstate";
+import { Circuit, Input, Output } from "../circuit";
 
 export class NotGate extends Circuit {
     
     constructor() {
         super("Not")
-        this.addInput(new InputState("A", this))
-        this.addOutput(new OutputState("Y"))
+        this.addInput(new Input("A"))
+        this.addOutput(new Output("Y"))
     }
 
     // public tick() {

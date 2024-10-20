@@ -11,15 +11,15 @@ export class ConnectionLine extends Material {
     private readonly width = 10
 
     constructor(
-        private io1: ConnectionPoint,
-        private io2: ConnectionPoint,
+        private output: ConnectionPoint,
+        private input: ConnectionPoint,
         modifiers: Modifiers<ConnectionLine> = new Modifiers()
     ) { 
-        if (io2.getPointType() != PointType.INPUT) {
-            console.log("io2 is not an input")
-        }
-        if (io1.getPointType() != PointType.OUTPUT) {
+        if (output.getPointType() != PointType.OUTPUT) {
             console.log("io1 is not an output")
+        }
+        if (input.getPointType() != PointType.INPUT) {
+            console.log("io2 is not an input")
         }
         super(
             new P5.Vector(0,0,1),
@@ -31,38 +31,42 @@ export class ConnectionLine extends Material {
         )
     }
 
-    setIo1(input: ConnectionPoint) {
-        this.io1 = input
+    getInput(): ConnectionPoint {
+        return this.input
     }
 
-    setIo2(output: ConnectionPoint) {
-        this.io2 = output
+    setInput(input: ConnectionPoint) {
+        this.input = input
+    }
+
+    getOutput(): ConnectionPoint {
+        return this.output
+    }
+
+    setOutput(output: ConnectionPoint) {
+        this.output = output
     }
 
     draw(p: P5): void {
         p.push()
             p.translate(0,0,this.realPos.z)
 
-            // console.log(this.io1.getValue())
-            if (this.io1.getValue()) {
+            if (this.input.getValue()) {
                 p.stroke(p.color(this.enabledColor))
             } else {
                 p.stroke(p.color(this.disabledColor))
             }
             p.strokeWeight(this.width)
 
-            let io1Pos = this.io1.getConnectionPointPosition()
-            let io2Pos = this.io2.getConnectionPointPosition()
-            p.line(io1Pos.x, io1Pos.y, io2Pos.x, io2Pos.y)
+            let inputPos = this.input.getConnectionPointPosition()
+            let outputPos = this.output.getConnectionPointPosition()
+            p.line(inputPos.x, inputPos.y, outputPos.x, outputPos.y)
         p.pop()
     }
 
     isInside(pos: P5.Vector): boolean {
-        let start = this.io1.getConnectionPointPosition()
-        let end = this.io2?.getConnectionPointPosition()
-        if (end == null) {
-            return false
-        }
+        let start = this.input.getConnectionPointPosition()
+        let end = this.output.getConnectionPointPosition()
         return pos.dist(start) + pos.dist(end) <= start.dist(end) + this.width;
     }
 

@@ -4,13 +4,13 @@ import { MaterialGroup } from "../materials/interfaces/materialgroup";
 
 export class Workspace extends MaterialGroup {
 
-    private _connectionManager = new ConnectionManager()
-
     private _scale = 1 // zoom
     private offset: P5.Vector // offset da posição dos items na workspace
     private dragging = false // se estamos arrastando a workspace
 
-    constructor() { 
+    constructor(
+        protected _connectionManager: ConnectionManager
+    ) { 
         super(new P5.Vector(0, 0)) 
         this.offset = new P5.Vector(0, 0)
     }

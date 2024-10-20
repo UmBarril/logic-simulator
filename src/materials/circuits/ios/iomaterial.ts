@@ -11,7 +11,6 @@ import { Modifiers } from "../../modifiers";
 import { ConnectionManager } from "../connectionmgr";
 import { MaterialGroup } from "../../interfaces/materialgroup";
 import { ConnectionPoint, PointType } from "../connectionpoint";
-import { IOState } from "../../../logic/iostate";
 
 /**
  * Essa classe representa um saída ou entrada de um circuito lógico.
@@ -42,6 +41,9 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
     private readonly dragPad: Rectangle
     private readonly label: TextBox
     
+    private _connectedConnectionPoint: ConnectionPoint | null = null
+    private value: boolean = false
+
     private currentDirection: Directions = Directions.UP;
     private isMoving: boolean = false;
 
@@ -50,8 +52,8 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
 
     protected constructor(
         p: P5,
+        protected name: string,
         pos: P5.Vector, 
-        name: string,
         connectionManager: ConnectionManager,
         private type: PointType,
         buttonClickDisabled: boolean
@@ -111,7 +113,7 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
         this.label = new TextBox(
             p,
             p.createVector(0, this.labelDistance /*, -1 */),
-            state.getName(), // mudar
+            name, // mudar
             // 50,
         )
         
@@ -124,16 +126,20 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
         this.updatePositions(p, this.currentDirection) // seta a direção padrão
     }
 
-    connect(connectionPoint: ConnectionPoint): void {
-        this.connectedIO = connectionPoint.getState()
+    getName(): string {
+        return this.name
     }
 
-    disconnect(connectionPoint: ConnectionPoint): void {
-        this.state.disconnect(connectionPoint.getState())
+    connect(connectionPoint: ConnectionPoint): void {
+        this._connectedConnectionPoint = connectionPoint
+    }
+
+    disconnect(): void {
+        this._connectedConnectionPoint = null
     }
 
     getConnectedConnectionPoint(): ConnectionPoint | null {
-        throw new Error('Method not implemented.');
+        return this._connectedConnectionPoint
     }
 
     getPointType(): PointType {
@@ -142,14 +148,14 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
 
     // ConnectionPoint
     public getValue(): boolean {
-        return this.state.getValue()
+        return this.value
     }
 
     // ConnectionPoint
     public updateValue(value: boolean) {
-        this.state.setValue(value)
-        console.log(this.state.getName(), value)
-        if (this.state.getValue()){
+        this.value = value
+        console.log(this.name, value)
+        if (this.value){
             this.button.setColor(this.enabledColor)
         } else {  
             this.button.setColor(this.disabledColor)

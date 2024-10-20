@@ -4,6 +4,9 @@ import { Material } from "../interfaces/material";
 import { Vector } from "p5";
 import { ConnectionPoint, PointType } from "./connectionpoint";
 import { UnfinishedConnectionLine } from "./unfinishedline";
+import { Circuit } from "../../logic/circuit";
+import { OutputConnectionPoint } from "./outputconnectionpoint";
+import { InputConnectionPoint } from "./inputconnectionpoint";
 
 /**
  * ConnectionManager é responsável por gerenciar as conexões 
@@ -13,17 +16,24 @@ import { UnfinishedConnectionLine } from "./unfinishedline";
  * @todo Implementar
  */
 export class ConnectionManager extends Material {
-    
+
     private selectedIO: ConnectionPoint | null = null
     private unfinishedConnectionLine: UnfinishedConnectionLine | null = null
 
     private outputs = new Map<ConnectionPoint, ConnectionLine>() 
     private inputs = new Map<ConnectionPoint, ConnectionLine>() 
 
-    constructor() { 
+    constructor(
+        // o circuito que esse ConnectionManager está editando nesse momento
+        private circuit: Circuit 
+    ) { 
         super(new P5.Vector)
     }
 
+    getCircuit(): Circuit {
+        return this.circuit
+    }
+    
     /**
      * Seleciona um output.
      * mostrar visualmente que o IO foi selecionado (talvez muandar uma notificacao) @todo
@@ -47,30 +57,14 @@ export class ConnectionManager extends Material {
         let connected = false
         if (io.getPointType() == PointType.OUTPUT) {
             if (this.selectedIO.getPointType() == PointType.INPUT) {
-                // conectando
-                io.connect(this.selectedIO)
-                this.selectedIO.connect(io)
-
-                // adicionando para ser desenhado
-                let line = new ConnectionLine(io, this.selectedIO)
-
-                this.outputs.set(io, line)
-                this.inputs.set(this.selectedIO, line)
-                // io.connect(this.selectedIO)
+                this.addConnection(io as InputConnectionPoint, this.selectedIO)
                 connected = true
             }
         }
         else // se não, é um input
         { 
             if (this.selectedIO.getPointType() == PointType.OUTPUT) {
-                // conectando
-                io.connect(this.selectedIO)
-                this.selectedIO.connect(io)
-
-                // adicionando para ser desenhado
-                let line = new ConnectionLine(this.selectedIO, io)
-                this.outputs.set(io, line)
-                this.inputs.set(this.selectedIO, line)
+                this.addConnection(this.selectedIO as InputConnectionPoint, io)
                 connected = true
             }
         }
@@ -81,6 +75,20 @@ export class ConnectionManager extends Material {
         this.unselect()
     }
 
+    private addConnection(input: InputConnectionPoint, output: OutputConnectionPoint) {
+        // conectando
+        input.connect(output)
+        output.connect(input)
+
+        // adicionando para ser desenhado
+        let line = new ConnectionLine(output, input)
+
+        this.inputs.set(input, line)
+        this.outputs.set(output, line)
+
+        this.circuit.addConnection(input, output)
+    }
+
     /**
      * Desseleciona o IO selecionado no momento.
      */
@@ -89,12 +97,29 @@ export class ConnectionManager extends Material {
         this.unfinishedConnectionLine = null
     }
 
+    /**
+     * Remove uma linha de conexão.
+     * @param line Linha de Conexão
+     */
     removeLine(line: ConnectionLine) {
-        throw new Error('Method not implemented.')
+        this.inputs.delete(line.getInput())
+        this.outputs.delete(line.getOutput())
     }
 
+    /**
+     * Remove uma linha de conexão que contenha o ponto.
+     * @param point Ponto de Conexão
+     */
     removeLineWith(point: ConnectionPoint) {
-        throw new Error('Method not implemented.')
+        if (this.inputs.has(point)) {
+            let output = this.inputs.get(point)!.getOutput()
+            this.outputs.delete(output)
+            this.inputs.delete(point)
+        } else if (this.outputs.has(point)) {
+            let input = this.outputs.get(point)!.getInput()
+            this.inputs.delete(input)
+            this.outputs.delete(point)
+        }
     }
 
     // não sei se gosto do connection manager desenhando as linhas assim, as tudo bem

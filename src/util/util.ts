@@ -31,3 +31,32 @@ export function randomPos(p: P5): P5.Vector {
     let height = { min: -p.height/2, max: p.height/2 }
     return p.createVector(p.random(width.min, width.max), p.random(height.min, height.max))
 }
+
+
+/**
+ * Função helper para criar uma cor sem uma instância de P5.
+ * Note que para que isso funcione, a cor deve ser criada a partir de uma função 
+ * {@link P5.draw | draw}, {@link P5.setup | setup}, ou funções chamadas por elas.
+ * @param r Vermelho
+ * @param g Verde
+ * @param b Azul
+ * @returns P5.Color
+ */
+// export function pColor(r: number, g: number, b: number): P5.Color {
+//     let c = new P5.Color()
+//     c.setRed(r)
+//     c.setGreen(g)
+//     c.setBlue(b)
+//     return c
+// }
+
+/**
+ * Função helper para criar uma cor sem uma instância de P5.
+ * Note que para que isso funcione, a cor deve ser criada a partir de uma função 
+ * {@link P5.draw | draw}, {@link P5.setup | setup}, ou funções chamadas por elas.
+ * @color Array de 3 posições com os valores de r, g, b
+ * @returns P5.Color
+ */
+// export function pColorFromArray(color: number[]): P5.Color {
+//     return pColor(color[0], color[1], color[2])
+// }
