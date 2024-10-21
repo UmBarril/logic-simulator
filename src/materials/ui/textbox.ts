@@ -38,10 +38,6 @@ export class TextBox extends Material {
         p.pop()
     }
 
-    setColor(color: P5.Color){
-        //this.color = color
-    }
-
     /** @todo */
     isInside(_: P5.Vector): boolean {
         return false
