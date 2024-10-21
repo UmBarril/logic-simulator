@@ -4,12 +4,15 @@ import { Screen } from './screen'
 import { TestingWorkspace } from "../examples/testing"
 import { UI } from "./ui"
 import { getMousePos } from "../util/util"
+import { Toolbar } from "../materials/ui/toolbar";
+import { Menu } from "../materials/ui/menu"
 
 export class CircuitModelingScreen implements Screen {
     
     private workspace: Workspace
     private ui: UI
-    // private toolBar: ToolBar | null = null
+    private toolBar: Toolbar
+    private menu: Menu  
     // private menu: FloatingMenu | null = null
 
     constructor(
@@ -18,6 +21,8 @@ export class CircuitModelingScreen implements Screen {
         // this.currentWorkspace = new DefaultWorkspace()
         this.workspace = new TestingWorkspace(p)
         this.ui = new UI(p)
+        this.toolBar = new Toolbar();
+        this.menu = new Menu(p, p.createVector(0, -300));
     }
 
     // TODO: fazer algum tipo de menu para selecionar isso OU 
@@ -50,6 +55,7 @@ export class CircuitModelingScreen implements Screen {
         // TODO
         this.workspace.windowResized(this.p)
         this.ui.windowResized(this.p)
+        this.menu.setPosition(this.p.createVector(this.p.width / 2, this.p.height / 2))
     }
 
     mouseWheel(e: MouseEvent): void {
@@ -71,6 +77,8 @@ export class CircuitModelingScreen implements Screen {
         this.p.background(53)
         this.ui.draw(this.p)
         this.workspace.draw(this.p)
+        this.toolBar.draw(this.p);
+        this.menu.draw(this.p)
     }
 
     doubleClicked(e: MouseEvent): void { }
@@ -84,6 +92,9 @@ export class CircuitModelingScreen implements Screen {
         if (e.key == 'r') {
             this.workspace.rotateSelected(this.p)
         }
+        if (e.key == 'm'){
+            this.menu.toggleVisibility()
+        }
     }
 
     keyReleased(e: KeyboardEvent): void {
@@ -94,16 +105,23 @@ export class CircuitModelingScreen implements Screen {
     mouseClicked(e: MouseEvent): void {
         this.workspace.mouseClicked(this.p, getMousePos(this.p))
         this.ui.mouseClicked(this.p, getMousePos(this.p))
+        this.toolBar.handleClick(e.clientX, e.clientY);
+        this.menu.mouseClicked(this.p, getMousePos(this.p))
     }
 
     mousePressed(e: MouseEvent): void {
         this.workspace.mousePressed(this.p, getMousePos(this.p))
         this.ui.mousePressed(this.p, getMousePos(this.p))
+        this.menu.mousePressed(this.p, getMousePos(this.p))
     }
 
     mouseReleased(e: MouseEvent): void {
+        console.log("test")
         this.workspace.mouseReleased(this.p, getMousePos(this.p))
         this.ui.mouseReleased(this.p, getMousePos(this.p))
+        this.menu.mouseReleased(this.p, getMousePos(this.p))
     }
 
+
+    
 }

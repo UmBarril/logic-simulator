@@ -4,6 +4,7 @@ import { Circle } from "../materials/shapes/circle"
 import { randomPos } from "../util/util"
 import { Workspace } from "../screens/workspace"
 import { IOMaterial } from "../materials/circuits/iomaterial"
+import { Menu } from "../materials/ui/menu"
 
 export class TestingWorkspace extends Workspace {
 
@@ -11,6 +12,8 @@ export class TestingWorkspace extends Workspace {
         p: P5,
     ) {
         super()
+
+        let menu = new Menu(p, p.createVector(0, -300))
 
         let circle = new Circle(
             p.createVector(0, 0),
@@ -27,6 +30,7 @@ export class TestingWorkspace extends Workspace {
         this.addChild(this.connectionManager) // transformar isso em this.add()
         this.addChild(om)
         this.addChild(circle)
+        this.addChild(menu);
     }
 
 }
