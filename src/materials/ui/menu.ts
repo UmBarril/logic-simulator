@@ -28,7 +28,7 @@ export class Menu extends MaterialGroup {
     }
 
     draw(p: P5): void {
-        //if(!this.visible) return
+        if(!this.visible) return
         
         // Desenhar botões
         for (let button of this.buttons) {
