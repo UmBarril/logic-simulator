@@ -1,6 +1,7 @@
 import P5 from "p5"
 import { ScreenManager } from "./screens/screenmgr"
 import { CircuitModelingScreen } from "./screens/circuitmodelingscreen"
+import { getMousePos, _global } from "./util/util"
 
 const sketch = (p: P5) => {
   const screenManager = new ScreenManager()
@@ -14,7 +15,8 @@ const sketch = (p: P5) => {
       p.resizeCanvas(p.windowWidth, (p.windowWidth * 9) / 16);
       scale = p.windowWidth / 1920
     }
-    screenManager.windowResized(p, scale)
+    screenManager.windowResized(p, scale * 2)
+    _global.scale = scale
   }
 
   function mouseOutOfCanvas() {
@@ -76,6 +78,7 @@ const sketch = (p: P5) => {
 
   p.draw = () => {
     screenManager.draw(p)
+    _global.lastMousePos = getMousePos(p)
   }
 }
 

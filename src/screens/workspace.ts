@@ -19,6 +19,14 @@ export class Workspace extends MaterialGroup {
         return this._connectionManager;
     }
 
+    setZoom(zoom: number) {
+        this.zoom = zoom
+    }
+
+    getZoom() {
+        return this.zoom
+    }
+
     /**
      * Rotaciona os itens selecionados
      */
@@ -43,8 +51,14 @@ export class Workspace extends MaterialGroup {
      * @param p P5
      */
     posInsideWorkspace(pos: P5.Vector): P5.Vector {
-        // calculo está errado, corrigir depois TODO
-        return pos.add(this.offset).mult(1/this.scale * this.zoom)
+        return pos.mult(1/this.getScale() * this.zoom).add(this.offset)
+    }
+
+    randomPosInsideWorkspace(p: P5): P5.Vector {
+        // levando em conta que as coordenadas do webgl começam no centro (0,0)
+        let width = { min: -p.width/2 * (1/this.getScale()), max: p.width/2  * (1/this.getScale())}
+        let height = { min: -p.height/2 * (1/this.getScale()), max: p.height/2  * (1/this.getScale())}
+        return p.createVector(p.random(width.min, width.max), p.random(height.min, height.max))
     }
 
     override draw(p: P5): void {
@@ -55,7 +69,7 @@ export class Workspace extends MaterialGroup {
             let change = p.createVector(
                 p.map(p.mouseX - p.pmouseX, -100, 100, -0.5, 0.5, true), 
                 p.map(p.mouseY - p.pmouseY, -100, 100, -0.5, 0.5, true)
-            ).mult(this._scale)
+            ).mult(this.getScale())
 
             this.offset.add(change)
         }

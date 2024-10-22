@@ -26,9 +26,9 @@ export abstract class MaterialGroup extends Material {
         return this._children
     }
 
-    override set scale(scale: number){
-        super.scale = scale
-        this._children.forEach(child => child.scale = scale)
+    override setScale(scale: number){
+        super.setScale(scale)
+        this._children.forEach(child => child.setScale(scale))
     }
 
     /** 

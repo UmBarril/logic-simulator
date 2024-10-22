@@ -1,5 +1,8 @@
 import P5 from 'p5'
 
+// não gosto desse "singleton", mas não achei uma forma melhor de fazer isso por enquanto
+export let _global = { lastMousePos: new P5.Vector(0, 0), scale: 1 }
+
 // Note que p.mouseX e p.mouseY são as coordenadas do canvas, não do mundo
 // Também, p.mouseX e p.mouseY começam no canto superior esquerdo, ao contrário do webgl
 
@@ -27,11 +30,19 @@ export function getMousePos(p: P5): P5.Vector {
  */
 export function randomPos(p: P5): P5.Vector {
     // levando em conta que as coordenadas do webgl começam no centro (0,0)
-    let width = { min: -p.width/2, max: p.width/2 }
+    let width = { min: -p.width/2 * 1, max: p.width/2 }
     let height = { min: -p.height/2, max: p.height/2 }
     return p.createVector(p.random(width.min, width.max), p.random(height.min, height.max))
 }
 
+export function getMouseDelta(p: P5): P5.Vector {
+    console.log(_global.lastMousePos)
+    return P5.Vector.sub(getMousePos(p), _global.lastMousePos)
+}
+
+export function getGlobalScale(): number {
+    return _global.scale
+}
 
 /**
  * Função helper para criar uma cor sem uma instância de P5.

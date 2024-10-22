@@ -17,8 +17,10 @@ export class Rectangle extends Material {
 
     draw(p: P5){
         p.push()
-        p.scale(this.scale)
+
+        p.scale(this.getScale())
         p.translate(0,0,this.realPos.z)
+
         if (this._dragging && this.modifiers.onMousePressed != null){
             this.modifiers.onMousePressed(this, getMousePos(p))
         }
@@ -26,6 +28,7 @@ export class Rectangle extends Material {
         p.fill(255, 255,0)
         p.color(this.color)
         p.rect(this.pointOfOrigin.x + this.pos.x, this.pointOfOrigin.y + this.pos.y, this.dimensions.x, this.dimensions.y)
+
         p.pop()
     }
 

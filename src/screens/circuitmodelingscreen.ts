@@ -49,13 +49,13 @@ export class CircuitModelingScreen implements Screen {
 
     windowResized(newScale: number) {
         // TODO
-        this.workspace.scale = newScale
+        this.workspace.setScale(newScale)
 
         // Não permitir que a escala seja menor que 0.5 (se não textos ficam ilegíveis)
         if (newScale < 0.5) {
-            this.ui.scale = 0.5
+            this.ui.setScale(0.5)
         } else {
-            this.ui.scale = newScale
+            this.ui.setScale(newScale)
         }
     }
 
@@ -68,9 +68,9 @@ export class CircuitModelingScreen implements Screen {
 
         // @ts-ignore
         if (e.delta > 0) {
-            this.workspace.zoom = this.p.constrain(this.workspace.zoom - (sensitivityZ * scaleFactor), minZoom, maxZoom);
+            // this.workspace.setZoom(this.p.constrain(this.workspace.getZoom() - (sensitivityZ * scaleFactor), minZoom, maxZoom));
         } else {
-            this.workspace.zoom = this.p.constrain(this.workspace.zoom + (sensitivityZ * scaleFactor), minZoom, maxZoom);
+            // this.workspace.setZoom(this.p.constrain(this.workspace.getZoom() + (sensitivityZ * scaleFactor), minZoom, maxZoom));
         }
     }
 

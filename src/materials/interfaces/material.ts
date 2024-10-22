@@ -32,6 +32,24 @@ export abstract class Material implements Drawable, Clickable {
     abstract isInside(pos: P5.Vector): boolean
 
     /**
+     * Converte um valor de acordo com a escala do material.
+     * @param n 
+     * @returns 
+     */
+    scaleVector(v: P5.Vector): P5.Vector {
+        return v.copy().mult(1/this.getScale())
+    }
+
+    /**
+     * Converte um valor de acordo com a escala do material.
+     * @param n 
+     * @returns 
+     */
+    scale(n: number): number {
+        return n * 1/this.getScale()
+    }
+
+    /**
      * @param p P5
      * @param pos Posição do mouse
      * @returns Se clicou dentro
@@ -126,11 +144,11 @@ export abstract class Material implements Drawable, Clickable {
         this._pointOfOrigin = value;
     }
 
-    public get scale(){
+    public getScale(){
         return this._scale
     }
 
-    public set scale(scale: number){
+    public setScale(scale: number){
         this._scale = scale
     }
 }

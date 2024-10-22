@@ -6,6 +6,9 @@ export class RotatingTitle extends Material {
     width = 200
     height = 200
 
+    scaledWidth = this.width * this.getScale()
+    scaledHeight = this.height * this.getScale()
+
     constructor(
         p: P5, 
         pos: P5.Vector,
@@ -14,21 +17,17 @@ export class RotatingTitle extends Material {
         private textSize = 50
     ) {
         super(pos)
-        this.graphics = p.createGraphics(this.width * this.scale, this.height * this.scale);
+        this.graphics = p.createGraphics(this.scaledWidth, this.scaledHeight);
         this.graphics.clear()
         this.graphics.textAlign(p.CENTER);
     }
 
     draw(p: P5): void {
-
-        let scaledWidth = this.width * this.scale
-        let scaledHeight = this.height * this.scale
-
         p.push()
 
+        p.scale(this.getScale())
         p.translate(P5.Vector.add(this.pos, this.pointOfOrigin)); 
-        // p.scale(this.scale)
-        // p.strokeWeight(0)
+        p.strokeWeight(0)
 
         // lógica para inverter o texto quando ele estiver do lado errado
         let rot = p.frameCount * 0.01 
@@ -46,12 +45,12 @@ export class RotatingTitle extends Material {
 
         // todo: remover esse tamanho hardcoded
         this.graphics.textAlign(p.CENTER, p.CENTER);
-        this.graphics.textSize(this.textSize * this.scale);
-        this.graphics.text(this._title, 0, 0, scaledWidth, scaledHeight);
+        this.graphics.textSize(this.textSize * this.getScale());
+        this.graphics.text(this._title, 0, 0, this.scaledWidth, this.scaledHeight);
 
         p.texture(this.graphics);
 
-        p.plane(scaledWidth, scaledHeight)
+        p.plane(this.scaledWidth, this.scaledHeight)
 
         p.pop()
     }

@@ -23,7 +23,8 @@ export class TextBox extends Material {
         const width = 100 // todo: remover esse tamanho e altura hardcoded
         const height = 100
         p.push()
-        p.translate(P5.Vector.add(this.pos, this.pointOfOrigin));
+        p.scale(this.getScale()) // SCALE PRIMEIRO 
+        p.translate(P5.Vector.add(this.pos, this.pointOfOrigin)); // TRANSLATE SEGUNDO
 
         p.strokeWeight(0) // descomentar isso quando não estiver debugando
         // this.graphics.rectMode(p.CENTER);

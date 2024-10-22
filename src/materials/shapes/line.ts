@@ -26,10 +26,10 @@ export class Line extends Material {
     draw(p: P5): void {
         p.push()
 
-        p.scale(this.scale)
+        p.scale(this.getScale())
         p.translate(0,0,this.pos.z)
         p.stroke(this.color)
-        p.strokeWeight(this.width * this.scale)
+        p.strokeWeight(this.width * this.getScale())
 
         let start = this.start
         let end = this.end

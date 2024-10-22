@@ -41,7 +41,7 @@ export class ConnectionLine extends Material {
 
     draw(p: P5): void {
         p.push()
-            p.scale(this.scale)
+            // p.scale(this.getScale())
             p.translate(0,0,this.realPos.z)
 
             if (this.io1.getValue()) {
@@ -49,13 +49,14 @@ export class ConnectionLine extends Material {
             } else {
                 p.stroke(p.color(disabledColor))
             }
-            p.strokeWeight(this.width * this.scale)
+            p.strokeWeight(this.width * this.getScale())
 
-            let inputPos = this.io2.getConnectionPointPosition()
-            let outputPos = this.io1.getConnectionPointPosition()
-            p.line(inputPos.x, inputPos.y, outputPos.x, outputPos.y)
+            let io1Pos = this.scaleVector(this.io1.getConnectionPointPosition())
+            let io2Pos = this.scaleVector(this.io2.getConnectionPointPosition())
+            p.line(io2Pos.x, io2Pos.y, io1Pos.x, io1Pos.y)
         p.pop()
     }
+
 
     isInside(pos: P5.Vector): boolean {
         let start = this.io2.getConnectionPointPosition()

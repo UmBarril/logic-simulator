@@ -1,6 +1,6 @@
 import P5 from "p5";
 import { Directions } from "../../../util/direction";
-import { getMousePos } from "../../../util/util";
+import { getMouseDelta, getMousePos } from "../../../util/util";
 import { KeyboardListener } from "../../interfaces/keyboardlistener";
 import { rotateKey as rotateClockWiseKey } from "../../../util/settings";
 import { Rectangle } from "../../shapes/rectangle";
@@ -43,9 +43,6 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
 
     private currentDirection: Directions = Directions.UP;
     private isMoving: boolean = false;
-
-    // TODO: implementar uma maneira genérica para isso
-    private onMoving = () => { };
 
     protected constructor(
         p: P5,
@@ -154,7 +151,7 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
     // ConnectionPoint
     public getConnectionPointPosition(): P5.Vector {
         return P5.Vector.add(
-            this.connectionPoint.realPos,
+            this.connectionPoint.pos,
             new P5.Vector(this.connectionPointWidth / 2, this.connectionPointWidth / 2)
         )
     }
@@ -162,11 +159,6 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
     private updatePositions(p: P5, direction: Directions){
         switch (direction){
             case Directions.UP:
-                this.onMoving = () => {
-                    let mousePos = getMousePos(p)
-                    this.pos = new P5.Vector(mousePos.x, mousePos.y - this.dragPadDistance - (this.dragPadHeight / 2))
-                }
-              
                 this.dragPad.pos =
                     new P5.Vector(-this.dragPadWidth / 2, this.dragPadDistance)
                 this.dragPad.setDimensions(this.dragPadWidth, this.dragPadHeight)
@@ -177,14 +169,6 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
                 break
 
             case Directions.RIGHT:
-                this.onMoving = () => {
-                    let mousePos = getMousePos(p)
-                    this.pos = p.createVector(
-                        mousePos.x + this.dragPadDistance + (this.dragPadHeight / 2),
-                        mousePos.y
-                    )
-                }
-
                 this.dragPad.pos =
                     new P5.Vector(-this.dragPadDistance - this.dragPadHeight, -this.dragPadWidth / 2)
                 this.dragPad.setDimensions(this.dragPadHeight, this.dragPadWidth)
@@ -231,7 +215,7 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
 
         // se tiver movendo, atualiza a posição
         if(this.isMoving){
-            this.onMoving()
+            this.pos.add(this.scaleVector(getMouseDelta(p)))
         }
     }
 
