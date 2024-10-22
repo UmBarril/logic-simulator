@@ -60,6 +60,7 @@ export class CircuitModelingScreen implements Screen {
         this.workspace.windowResized(this.p)
         this.ui.windowResized(this.p)
         this.menu.setPosition(this.p.createVector(this.p.width / 2, this.p.height / 2))
+        this.menu.setPosition(this.p.createVector(this.p.width / 2, this.p.height / 2))
     }
 
     mouseWheel(e: MouseEvent): void {
@@ -99,6 +100,9 @@ export class CircuitModelingScreen implements Screen {
         if (e.key == 'm'){
             this.menu.toggleVisibility()
         }
+        if (e.key == 'm'){
+            this.menu.toggleVisibility()
+        }
     }
 
     keyReleased(e: KeyboardEvent): void {
@@ -117,14 +121,20 @@ export class CircuitModelingScreen implements Screen {
         this.workspace.mousePressed(this.p, getMousePos(this.p))
         this.ui.mousePressed(this.p, getMousePos(this.p))
         this.menu.mousePressed(this.p, getMousePos(this.p))
+        this.menu.mousePressed(this.p, getMousePos(this.p))
     }
 
     mouseReleased(e: MouseEvent): void {
         console.log("test")
+        console.log("test")
         this.workspace.mouseReleased(this.p, getMousePos(this.p))
         this.ui.mouseReleased(this.p, getMousePos(this.p))
         this.menu.mouseReleased(this.p, getMousePos(this.p))
+        this.menu.mouseReleased(this.p, getMousePos(this.p))
     }
+
+
+    
 
 
     
