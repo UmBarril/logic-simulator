@@ -97,7 +97,7 @@ export class CircuitMaterial extends MaterialGroup {
         // adiciona o label com o nome do circuito
         let text = new TextBox(
             p,
-            p.createVector(0, 55),
+            p.createVector(this.ioCircleRad, rectheight / 2),
             circuit.getName(),
             this.textSize
         )

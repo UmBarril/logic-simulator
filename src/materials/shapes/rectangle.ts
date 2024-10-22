@@ -23,8 +23,7 @@ export class Rectangle extends Material {
             this.modifiers.onMousePressed(this, getMousePos(p))
         }
 
-        p.fill(255, 255,0)
-        p.color(this.color)
+        p.fill(this.color)
         p.rect(this.pointOfOrigin.x + this.pos.x, this.pointOfOrigin.y + this.pos.y, this.dimensions.x, this.dimensions.y)
         p.pop()
     }
