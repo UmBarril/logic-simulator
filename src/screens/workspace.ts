@@ -1,6 +1,10 @@
 import P5 from "p5"
 import { ConnectionManager } from "../materials/circuits/connectionmgr";
 import { MaterialGroup } from "../materials/interfaces/materialgroup";
+import { Circuit } from "../logic/circuit";
+import { CircuitMaterial } from "../materials/circuits/circuitmaterial";
+import { InputMaterial } from "../materials/circuits/ios/inputmaterial";
+import { OutputMaterial } from "../materials/circuits/ios/outputmaterial";
 
 export class Workspace extends MaterialGroup {
 
@@ -25,6 +29,42 @@ export class Workspace extends MaterialGroup {
 
     public get scale() {
         return this._scale
+    }
+
+    addOutput(p: P5, name: string) {
+        this.verifyCircuitExists()
+        if (this.connectionManager.getCircuit().checkOutputExists(name)) {
+            throw new Error("Input already exists")
+        }
+        this.connectionManager.getCircuit().addOutput(name)
+        let o = new OutputMaterial(p, new P5.Vector(0, 0), name, this.connectionManager)
+
+        this.addChild(o)
+    }
+
+    addInput(p: P5, name: string) {
+        this.verifyCircuitExists()
+        if (this.connectionManager.getCircuit().checkInputExists(name)) {
+            throw new Error("Input already exists")
+        }
+        this.connectionManager.getCircuit().addInput(name)
+        let i = new InputMaterial(p, new P5.Vector(0, 0), name, this.connectionManager)
+
+        this.addChild(i)
+    }
+
+    addGate(p: P5, circuit: Circuit) {
+        this.verifyCircuitExists()
+        let cm = new CircuitMaterial(p, new P5.Vector(0,0), this.connectionManager, circuit)
+
+        this.addChild(cm)
+    }
+
+    verifyCircuitExists() {
+        // NAO GOSTO DE TER QUE ACESSAR O CIRCUIT DIRETAMENTE, MAS ESTOU SEM TEMPO
+        if (this.connectionManager.getCircuit() == undefined) {
+            throw new Error("Circuit not defined")
+        }
     }
 
     /**
@@ -56,6 +96,7 @@ export class Workspace extends MaterialGroup {
     }
 
     override draw(p: P5): void {
+        p.push()
         if (this.dragging) {
             // https://editor.p5js.org/palpista11/sketches/XRx0nlsXi
             // TODO: tornar isso mais suave e natural
@@ -74,6 +115,7 @@ export class Workspace extends MaterialGroup {
 
         super.draw(p)
         this._connectionManager.draw(p)
+        p.pop()
     }
 
     // TODO: verificar se o clique foi numa parte da ui
