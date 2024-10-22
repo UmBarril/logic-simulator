@@ -5,6 +5,7 @@ import { randomPos } from "../util/util"
 import { Workspace } from "../screens/workspace"
 import { IOMaterial } from "../materials/circuits/iomaterial"
 import { Menu } from "../materials/ui/menu"
+import { Toolbar } from "../materials/ui/toolbar"
 
 export class TestingWorkspace extends Workspace {
 
@@ -12,7 +13,8 @@ export class TestingWorkspace extends Workspace {
         p: P5,
     ) {
         super()
-
+        
+        let toolbar = new Toolbar(p, p.createVector(0,0));
         let menu = new Menu(p, p.createVector(0, -300))
 
         let circle = new Circle(
@@ -31,6 +33,7 @@ export class TestingWorkspace extends Workspace {
         this.addChild(om)
         this.addChild(circle)
         this.addChild(menu);
+        this.addChild(toolbar);
     }
 
 }

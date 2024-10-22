@@ -1,5 +1,5 @@
 import P5 from 'p5';
-
+import { MaterialGroup } from '../interfaces/materialgroup';
 /**
  * Interface que representa um botão na Toolbar.
  */
@@ -16,15 +16,18 @@ interface Button {
 /**
  * Classe que representa a Toolbar.
  */
-export class Toolbar {
+export class Toolbar extends MaterialGroup  {
     private buttons: Button[] = [];
     private buttonWidth: number = 80;
     private buttonHeight: number = 30;
     private toolbarY: number = 540;  
     private buttonSpacing: number = 10;
 
-    constructor() {
+    constructor(p: P5, pos: P5.Vector) {
+        super(pos);
+
         this.createButtons();
+        
     }
 
     private createButtons() {
