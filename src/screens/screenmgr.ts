@@ -33,6 +33,13 @@ export class ScreenManager  {
         this.currentScreen?.draw(p)
     }
 
+    mouseMoved(e: MouseEvent) {
+        if (!this.isCurrentScreenValid()) {
+            return;
+        }
+        this.currentScreen?.mouseMoved(e)
+    }
+
     windowResized(p: P5) { 
         if (!this.isCurrentScreenValid()) {
             return;

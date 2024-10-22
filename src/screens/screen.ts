@@ -8,6 +8,7 @@ export interface Screen {
     enter(onEnter: () => void): void; // talvez tirar esse onEnter e onExit
     exit(onExit: () => void): void; // não sei se gosto disso, mas vai ficar assim por enquanto
 
+    mouseMoved(e: MouseEvent): void;
     windowResized(): void;
     draw(p: P5): void;
     mouseWheel(e: MouseEvent): void;

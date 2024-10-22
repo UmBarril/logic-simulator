@@ -1,18 +1,17 @@
 import P5 from "p5"
 import { Workspace } from './workspace'
 import { Screen } from './screen'
-import { TestingWorkspace } from "../examples/testing"
 import { UI } from "./ui"
 import { getMousePos } from "../util/util"
-import { Toolbar } from "../materials/ui/toolbar";
 import { Menu } from "../materials/ui/menu"
 import { WTestingWorkspace } from "../examples/w"
+import { ToolBar2 } from "../materials/ui/toolbar2"
 
 export class CircuitModelingScreen implements Screen {
     
     private workspace: Workspace
     private ui: UI
-    private toolBar: Toolbar
+    private toolBar: ToolBar2
     private menu: Menu  
     // private menu: FloatingMenu | null = null
 
@@ -22,7 +21,7 @@ export class CircuitModelingScreen implements Screen {
         // this.currentWorkspace = new DefaultWorkspace()
         this.workspace = new WTestingWorkspace(p)
         this.ui = new UI(p)
-        this.toolBar = new Toolbar();
+        this.toolBar = new ToolBar2(p, this.workspace);
         this.menu = new Menu(p, p.createVector(0, -300));
     }
 
@@ -52,6 +51,10 @@ export class CircuitModelingScreen implements Screen {
         // throw new Error("Method not implemented.")
     }
 
+    mouseMoved(e: MouseEvent): void {
+        this.toolBar.mouseMoved(this.p);
+    }
+
     windowResized() {
         // TODO
         this.workspace.windowResized(this.p)
@@ -79,7 +82,7 @@ export class CircuitModelingScreen implements Screen {
         this.ui.draw(this.p)
         this.workspace.draw(this.p)
         this.toolBar.draw(this.p);
-        this.menu.draw(this.p)
+        // this.menu.draw(this.p) // COMENTADO ATÉ FUNCIONAR
     }
 
     doubleClicked(e: MouseEvent): void { }
@@ -106,7 +109,7 @@ export class CircuitModelingScreen implements Screen {
     mouseClicked(e: MouseEvent): void {
         this.workspace.mouseClicked(this.p, getMousePos(this.p))
         this.ui.mouseClicked(this.p, getMousePos(this.p))
-        this.toolBar.handleClick(e.clientX, e.clientY);
+        this.toolBar.mouseClicked(this.p, getMousePos(this.p));
         this.menu.mouseClicked(this.p, getMousePos(this.p))
     }
 

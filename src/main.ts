@@ -10,6 +10,10 @@ const sketch = (p: P5) => {
     screenManager.setCurrentScreen(new CircuitModelingScreen(p))
   }
 
+  p.mouseMoved = (e: MouseEvent) => {
+    screenManager.mouseMoved(e)
+  }
+
   p.windowResized = () => {
     p.resizeCanvas(p.windowWidth, p.windowHeight);
     screenManager.windowResized(p)
