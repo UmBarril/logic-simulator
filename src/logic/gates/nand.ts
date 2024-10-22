@@ -1,8 +1,8 @@
 import { Circuit } from "../circuit";
 
-export class AndGate extends Circuit {
+export class NandGate extends Circuit {
     constructor() {
-        super("and");
+        super("nand");
         this.addInput("a");
         this.addInput("b");
         this.addOutput("c");
