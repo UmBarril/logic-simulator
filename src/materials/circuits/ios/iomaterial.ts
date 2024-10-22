@@ -1,6 +1,5 @@
 import P5 from "p5";
 import { Directions } from "../../../util/direction";
-import { getMousePos } from "../../../util/util";
 import { KeyboardListener } from "../../interfaces/keyboardlistener";
 import { rotateKey as rotateClockWiseKey } from "../../../util/settings";
 import { Rectangle } from "../../shapes/rectangle";
@@ -12,6 +11,7 @@ import { ConnectionManager } from "../connectionmgr";
 import { MaterialGroup } from "../../interfaces/materialgroup";
 import { ConnectionPoint, PointType } from "../connectionpoint";
 import { disabledColor } from "../colors";
+import { getMouseDelta } from "../../../util/util";
 
 /**
  * Essa classe representa um saída ou entrada de um circuito lógico.
@@ -162,11 +162,6 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
     private updatePositions(p: P5, direction: Directions){
         switch (direction){
             case Directions.UP:
-                this.onMoving = () => {
-                    let mousePos = getMousePos(p)
-                    this.pos = new P5.Vector(mousePos.x, mousePos.y - this.dragPadDistance - (this.dragPadHeight / 2))
-                }
-              
                 this.dragPad.pos =
                     new P5.Vector(-this.dragPadWidth / 2, this.dragPadDistance)
                 this.dragPad.setDimensions(this.dragPadWidth, this.dragPadHeight)
@@ -177,14 +172,6 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
                 break
 
             case Directions.RIGHT:
-                this.onMoving = () => {
-                    let mousePos = getMousePos(p)
-                    this.pos = p.createVector(
-                        mousePos.x + this.dragPadDistance + (this.dragPadHeight / 2),
-                        mousePos.y
-                    )
-                }
-
                 this.dragPad.pos =
                     new P5.Vector(-this.dragPadDistance - this.dragPadHeight, -this.dragPadWidth / 2)
                 this.dragPad.setDimensions(this.dragPadHeight, this.dragPadWidth)
@@ -231,7 +218,7 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
 
         // se tiver movendo, atualiza a posição
         if(this.isMoving){
-            this.onMoving()
+            this.pos.add(getMouseDelta(p))
         }
     }
 

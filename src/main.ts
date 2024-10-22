@@ -1,6 +1,7 @@
 import P5 from "p5"
 import { ScreenManager } from "./screens/screenmgr"
 import { CircuitModelingScreen } from "./screens/circuitmodelingscreen"
+import { _global, getMousePos } from "./util/util"
 
 const sketch = (p: P5) => {
   const screenManager = new ScreenManager()
@@ -45,6 +46,7 @@ const sketch = (p: P5) => {
 
   p.draw = () => {
     screenManager.draw(p)
+    _global.lastMousePos = getMousePos(p)
   }
 }
 

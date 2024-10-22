@@ -5,7 +5,7 @@ import { Modifiers } from "../modifiers";
 import { ConnectionManager } from "./connectionmgr";
 import { MaterialGroup } from "../interfaces/materialgroup";
 import { Rectangle } from "../shapes/rectangle";
-import { getMousePos } from "../../util/util";
+import { getMouseDelta, getMousePos } from "../../util/util";
 import { TextBox } from "../ui/textbox";
 import { CircuitOutputMaterial } from "./ios/circuitoutputmateial";
 import { CircuitInputMaterial } from "./ios/circuitinputmaterial";
@@ -107,7 +107,7 @@ export class CircuitMaterial extends MaterialGroup {
     override draw(p: P5): void {
         super.draw(p)
         if (this._isDragging) {
-            this.pos = getMousePos(p)
+            this.pos.add(getMouseDelta(p))
         }
     }
 
