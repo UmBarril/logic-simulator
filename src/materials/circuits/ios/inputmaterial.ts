@@ -1,43 +1,39 @@
 import P5 from "p5";
 import { ConnectionManager } from "../connectionmgr";
 import { IOMaterial } from "./iomaterial";
-import { ConnectionPoint, PointType } from "../connectionpoint";
-import { Circuit } from "../../../logic/circuit";
 import { InputConnectionPoint } from "../inputconnectionpoint";
+import { disabledColor, enabledColor } from "../colors";
 
 export class InputMaterial extends IOMaterial implements InputConnectionPoint {
 
-    private _parentCircuit: Circuit
+    discriminator: 'INPUT' = 'INPUT';
 
     constructor(
         p: P5,
         pos: P5.Vector, 
         name: string,
         connectionManager: ConnectionManager,
-        parentCircuit?: Circuit
     ) {
-        super(p, name, pos, connectionManager, PointType.INPUT, true)
-        if (parentCircuit == undefined) {
-            this._parentCircuit = connectionManager.getCircuit()
-        } else {
-            this._parentCircuit = parentCircuit
-        }
+        super(p, name, pos, connectionManager, (circle) => {
+            this.updateValue(!this.getValue())
+            return true 
+        })
+
+        this.getCircuit().addInputObserver(name, (value) => {
+            if (value){
+                this.setButtonColor(enabledColor)
+            } else {  
+                this.setButtonColor(disabledColor)
+            }
+        })
     }
 
-    public getParentCircuit() {
-        return this._parentCircuit
+    updateValue(value: boolean): void {
+       this.getCircuit().setInputValue(this.getName(), value) 
     }
 
-    override updateValue(value: boolean): void {
-        super.updateValue(value)
-        this._parentCircuit.update()
+    getValue(): boolean {
+       return this.getCircuit().getInputValue(this.getName()) 
     }
 
-    override connect(io: ConnectionPoint): void {
-        if (io.getPointType() == PointType.OUTPUT) {
-            super.connect(io)
-        } else {
-            throw new Error("Method not implemented.");
-        }
-    }
 }

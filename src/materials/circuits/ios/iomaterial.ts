@@ -11,6 +11,7 @@ import { Modifiers } from "../../modifiers";
 import { ConnectionManager } from "../connectionmgr";
 import { MaterialGroup } from "../../interfaces/materialgroup";
 import { ConnectionPoint, PointType } from "../connectionpoint";
+import { disabledColor } from "../colors";
 
 /**
  * Essa classe representa um saída ou entrada de um circuito lógico.
@@ -20,9 +21,6 @@ import { ConnectionPoint, PointType } from "../connectionpoint";
 export abstract class IOMaterial extends MaterialGroup implements KeyboardListener, ConnectionPoint {
 
     private readonly bridgeColor = [255, 5, 100]
-    // fazer essas cores serem configuráveis e compartilhadas entre os connectionpoints/lines
-    private readonly enabledColor = [255, 255, 0]
-    private readonly disabledColor = [255, 0, 255]
 
     private readonly buttonRad = 20;
 
@@ -42,7 +40,6 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
     private readonly label: TextBox
     
     private _connectedConnectionPoint: ConnectionPoint | null = null
-    private value: boolean = false
 
     private currentDirection: Directions = Directions.UP;
     private isMoving: boolean = false;
@@ -52,11 +49,10 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
 
     protected constructor(
         p: P5,
-        protected name: string,
+        private name: string,
         pos: P5.Vector, 
-        connectionManager: ConnectionManager,
-        private type: PointType,
-        buttonClickDisabled: boolean
+        protected connectionManager: ConnectionManager,
+        onButtonClick: (button: Circle) => boolean,
     ) {
         super(pos)
 
@@ -79,14 +75,10 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
         this.button = new Circle(
             p.createVector(0, 0),
             this.buttonRad,
-            [255, 255, 0], // essa cor vai ser mudada depois
+            disabledColor, // essa cor vai ser mudada depois
             // nao funciona para desativar pois ele apenas detecta quando clica dentro dele
             // usar connection manager depois para desativar (e ativar tbm talvez)
-            new Modifiers<Circle>().addOnClick((circle) => {
-                if (buttonClickDisabled) return false
-                this.updateValue(!this.getValue())
-                return true
-            })
+            new Modifiers<Circle>().addOnClick(onButtonClick)
         )
 
         // Pad de conexão 
@@ -126,6 +118,19 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
         this.updatePositions(p, this.currentDirection) // seta a direção padrão
     }
 
+    abstract updateValue(value: boolean): void
+
+    abstract getValue(): boolean
+
+    protected setButtonColor(color: number[]): void {
+        this.button.setColor(color)
+    }
+
+    public getCircuit() {
+        // Quando esse input é criado, ele pertence ao circuito no connectionManager
+        return this.connectionManager.getCircuit() 
+    }
+
     getName(): string {
         return this.name
     }
@@ -142,24 +147,8 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
         return this._connectedConnectionPoint
     }
 
-    getPointType(): PointType {
-        return this.type;
-    }
-
-    // ConnectionPoint
-    public getValue(): boolean {
-        return this.value
-    }
-
-    // ConnectionPoint
-    public updateValue(value: boolean) {
-        this.value = value
-        console.log(this.name, value)
-        if (this.value){
-            this.button.setColor(this.enabledColor)
-        } else {  
-            this.button.setColor(this.disabledColor)
-        }
+    getIsParent(): boolean {
+        return true
     }
 
     // ConnectionPoint
@@ -217,7 +206,7 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
      * Rotaciona este material em sentido horário
      * @param p P5
      */
-    private changeDirection(p: P5){
+    private changeDirection(p: P5) {
         switch (this.currentDirection){
             case Directions.UP:
                 this.currentDirection = Directions.RIGHT

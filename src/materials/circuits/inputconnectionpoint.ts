@@ -1,6 +1,9 @@
-import { Circuit } from "../../logic/circuit";
-import { ConnectionPoint } from "./connectionpoint";
+import { ConnectionPoint, PointType } from "./connectionpoint";
 
 export interface InputConnectionPoint extends ConnectionPoint{
-    getParentCircuit(): Circuit;
+    discriminator: 'INPUT'
+}
+
+export function isInputConnectionPoint(object: any): object is InputConnectionPoint {
+     return object.discriminator === 'INPUT';
 }

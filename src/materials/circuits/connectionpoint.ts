@@ -1,4 +1,5 @@
 import P5 from 'p5'
+import { Circuit } from '../../logic/circuit'
 
 export enum PointType {
     INPUT,
@@ -6,17 +7,6 @@ export enum PointType {
 }
 
 export interface ConnectionPoint {
-
-    /**
-     * Conecta um ponto de conexão a outro ponto de conexão.
-     * @param connectionPoint 
-     */
-    connect(connectionPoint: ConnectionPoint): void
-
-    /**
-     * Desconecta o ponto de outro ponto de conexão.
-     */
-    disconnect(): void
 
     /**
      * Atualiza o valor do ponto de conexão.
@@ -36,18 +26,19 @@ export interface ConnectionPoint {
     getValue(): boolean
 
     /**
-     * Retorna se o ponto de conexão é um ponto de entrada ou saída.
-     */
-    getPointType(): PointType
-
-    /**
-     * Retorna o ponto de conexão conectado a este ponto de conexão.
-     */
-    getConnectedConnectionPoint(): ConnectionPoint | null
-
-    /**
      * Retorna a posição do ponto de conexão.
      */
     getConnectionPointPosition(): P5.Vector
 
+
+    /**
+     * Se este ponto de conexão é faz parte de um circuito pai (o que está sendo editado no momento).
+     * TALVEZ TRANSFORMAR ISSO NUM TIPO DE DEPOIS @todo
+     */
+    getIsParent(): boolean
+
+    /**
+     * Retorna o circuito pai do ponto de conexão.
+     */
+    getCircuit(): Circuit
 }

@@ -4,6 +4,7 @@ import { Screen } from './screen'
 import { TestingWorkspace } from "../examples/testing"
 import { UI } from "./ui"
 import { getMousePos } from "../util/util"
+import { WTestingWorkspace } from "../examples/w"
 
 export class CircuitModelingScreen implements Screen {
     
@@ -16,7 +17,7 @@ export class CircuitModelingScreen implements Screen {
         public p: P5
     ) {
         // this.currentWorkspace = new DefaultWorkspace()
-        this.workspace = new TestingWorkspace(p)
+        this.workspace = new WTestingWorkspace(p)
         this.ui = new UI(p)
     }
 

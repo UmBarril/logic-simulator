@@ -2,11 +2,11 @@ import P5 from "p5"
 import { ConnectionLine } from "./connectionline";
 import { Material } from "../interfaces/material";
 import { Vector } from "p5";
-import { ConnectionPoint, PointType } from "./connectionpoint";
+import { ConnectionPoint } from "./connectionpoint";
 import { UnfinishedConnectionLine } from "./unfinishedline";
-import { Circuit } from "../../logic/circuit";
-import { OutputConnectionPoint } from "./outputconnectionpoint";
-import { InputConnectionPoint } from "./inputconnectionpoint";
+import { isOutputConnectionPoint as isOutput, OutputConnectionPoint } from "./outputconnectionpoint";
+import { EditableCircuit } from "../../logic/editablecircuit";
+import { InputConnectionPoint, isInputConnectionPoint as isInput } from "./inputconnectionpoint";
 
 /**
  * ConnectionManager é responsável por gerenciar as conexões 
@@ -18,24 +18,25 @@ import { InputConnectionPoint } from "./inputconnectionpoint";
 export class ConnectionManager extends Material {
 
     private selectedIO: ConnectionPoint | null = null
+
     private unfinishedConnectionLine: UnfinishedConnectionLine | null = null
 
-    private outputs = new Map<ConnectionPoint, ConnectionLine>() 
-    private inputs = new Map<ConnectionPoint, ConnectionLine>() 
+    private outputs = new Map<OutputConnectionPoint, ConnectionLine>() 
+    private inputs = new Map<InputConnectionPoint, ConnectionLine>() 
 
     constructor(
         // o circuito que esse ConnectionManager está editando nesse momento
-        private circuit: Circuit 
+        private circuit: EditableCircuit 
     ) { 
         super(new P5.Vector)
     }
 
-    getCircuit(): Circuit {
+    getCircuit(): EditableCircuit {
         return this.circuit
     }
     
     /**
-     * Seleciona um output.
+     * Seleciona um IO.
      * mostrar visualmente que o IO foi selecionado (talvez muandar uma notificacao) @todo
      * @param output 
      */
@@ -53,40 +54,125 @@ export class ConnectionManager extends Material {
             return
         }
 
-        // conectar
-        let connected = false
-        if (io.getPointType() == PointType.OUTPUT) {
-            if (this.selectedIO.getPointType() == PointType.INPUT) {
-                this.addConnection(io as InputConnectionPoint, this.selectedIO)
-                connected = true
-            }
-        }
-        else // se não, é um input
-        { 
-            if (this.selectedIO.getPointType() == PointType.OUTPUT) {
-                this.addConnection(this.selectedIO as InputConnectionPoint, io)
-                connected = true
-            }
+        if (this.selectedIO.getCircuit() == io.getCircuit()) {
+            // não permitir conectar um input a outro input do mesmo circuito
+            // talvez isso possa ser permitido no futuro, mas por enquanto não
+            return 
         }
 
-        if (!connected) {
-            return
+        let selectedIsParent = this.selectedIO.getIsParent()
+        let ioIsParent = io.getIsParent()
+
+        let connected = false
+        if (selectedIsParent && ioIsParent) {
+            connected = this.parent2(this.selectedIO, io)
+        } 
+        else if (selectedIsParent) {
+            connected = this.parent1(this.selectedIO, io)
         }
-        this.unselect()
+        else if (ioIsParent) {
+            connected = this.parent1(io, this.selectedIO)
+        } 
+        else  {
+            connected = this.parent0(this.selectedIO, io)
+        }
+        if (!connected) {
+            this.unselect()
+        }
     }
 
-    private addConnection(input: InputConnectionPoint, output: OutputConnectionPoint) {
-        // conectando
-        input.connect(output)
-        output.connect(input)
+    // nenhum é conexão do circuito pai (this.circuit)
+    // se retornar false, não conectou. se true conectou
+    private parent0(a: ConnectionPoint, b: ConnectionPoint): boolean {
+        if (isOutput(a)) {
+            if (isOutput(b)) {
+                return false 
+            } else if (isInput(b)) {
+                let line = new ConnectionLine(a, b)
+                this.outputs.set(a, line)
+                this.inputs.set(b, line)
 
-        // adicionando para ser desenhado
-        let line = new ConnectionLine(output, input)
+                this.circuit.connectOuter(a.getName(), b.getName(), this.circuit)
+                return true
+            }
+        } else if (isInput(a)) {
+            if (isOutput(b)) {
+                let line = new ConnectionLine(b, a)
+                this.outputs.set(b, line)
+                this.inputs.set(a, line)
 
-        this.inputs.set(input, line)
-        this.outputs.set(output, line)
+                this.circuit.connectOuter(b.getName(), a.getName(), this.circuit)
+                return true 
+            } else if (isInput(b)) {
+                return false
+            }
+        }
+        return false; // nunca deve chegar aqui
+    }
 
-        this.circuit.addConnection(input, output)
+    // a é conexão do circuito pai (this.circuit)
+    // se retornar false, não conectou. se true conectou
+    private parent1(a: ConnectionPoint, b: ConnectionPoint) {
+        console.log("conectou")
+        console.log(isOutput(a))
+        console.log(isInput(a))
+        console.log(a)
+        // @ts-ignore
+        console.log(a.discriminator)
+        if (isOutput(a)) {
+            if (isOutput(b)) {
+                let line = new ConnectionLine(b, a)
+                this.outputs.set(b, line)
+                this.outputs.set(a, line)
+
+                this.circuit.connectOuter(b.getName(), a.getName(), this.circuit)
+                return true
+            } else if (isInput(b)) {
+                return false
+            }
+        } else if (isInput(a)) {
+            if (isOutput(b)) {
+                return false
+            } else if (isInput(b)) {
+                console.log("conectou")
+                let line = new ConnectionLine(a, b)
+                this.inputs.set(a, line)
+                this.inputs.set(b, line)
+
+                this.circuit.connectInner(a.getName(), b.getName(), this.circuit)
+                return true
+            }
+        }
+        return false; // nunca deve chegar aqui
+    }
+
+    // a e b são conexoes do circuito pai (this.circuit)
+    // se retornar false, não conectou. se true conectou
+    private parent2(a: ConnectionPoint, b: ConnectionPoint) {
+        if (isOutput(a)) {
+            if (isOutput(b)) {
+                return false
+            } else if (isInput(b)) {
+                let line = new ConnectionLine(b, a)
+                this.inputs.set(b, line)
+                this.outputs.set(a, line)
+
+                this.circuit.connectInner(b.getName(), a.getName(), this.circuit)
+                return true
+            }
+        } else if (isInput(a)) {
+            if (isOutput(b)) {
+                let line = new ConnectionLine(a, b)
+                this.inputs.set(a, line)
+                this.outputs.set(b, line)
+
+                this.circuit.connectInner(a.getName(), b.getName(), this.circuit)
+
+            } else if (isInput(b)) {
+                return false
+            }
+        }
+        return false; // nunca deve chegar aqui
     }
 
     /**
@@ -97,30 +183,45 @@ export class ConnectionManager extends Material {
         this.unfinishedConnectionLine = null
     }
 
+    // TODOFAST ESTÁ INCOMPLETO
     /**
      * Remove uma linha de conexão.
      * @param line Linha de Conexão
      */
     removeLine(line: ConnectionLine) {
-        this.inputs.delete(line.getInput())
-        this.outputs.delete(line.getOutput())
+        let io1 = line.getIo1()
+        let io2 = line.getIo2()
+        if (isInput(io1)) {
+            this.inputs.delete(io1)
+        } else if (isOutput(io1)) {
+            this.outputs.delete(io1)
+        }
+        if (isInput(io2)) {
+            this.inputs.delete(io2)
+        } else if (isOutput(io2)) {
+            this.outputs.delete(io2)
+        }
+
+        // TODOFAST TEM QUE TER UMA MANEIRA DE DISCONECTAR INNER
+        // this.circuit.disconnectOuter(line.getIo2().getName())
     }
 
+    // TODOFAST
     /**
      * Remove uma linha de conexão que contenha o ponto.
      * @param point Ponto de Conexão
      */
-    removeLineWith(point: ConnectionPoint) {
-        if (this.inputs.has(point)) {
-            let output = this.inputs.get(point)!.getOutput()
-            this.outputs.delete(output)
-            this.inputs.delete(point)
-        } else if (this.outputs.has(point)) {
-            let input = this.outputs.get(point)!.getInput()
-            this.inputs.delete(input)
-            this.outputs.delete(point)
-        }
-    }
+    // removeLineWith(point: ConnectionPoint) {
+    //     if (this.inputs.has(point)) {
+    //         let output = this.inputs.get(point)!.getIo1()
+    //         this.outputs.delete(output)
+    //         this.inputs.delete(point)
+    //     } else if (this.outputs.has(point)) {
+    //         let input = this.outputs.get(point)!.getIo2()
+    //         this.inputs.delete(input)
+    //         this.outputs.delete(point)
+    //     }
+    // }
 
     // não sei se gosto do connection manager desenhando as linhas assim, as tudo bem
     override draw(p: P5): void { 

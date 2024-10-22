@@ -2,19 +2,20 @@ import P5 from 'p5'
 import { Modifiers } from "../../modifiers";
 import { Circle } from "../../shapes/circle";
 import { ConnectionManager } from '../connectionmgr';
-import { ConnectionPoint, PointType } from '../connectionpoint';
+import { ConnectionPoint } from '../connectionpoint';
+import { Circuit } from '../../../logic/circuit';
 
-export class CircuitIOMaterial extends Circle implements ConnectionPoint {
+export abstract class CircuitIOMaterial extends Circle implements ConnectionPoint {
 
-    private value: boolean = false
+    private _parentCircuit: Circuit
 
     private _connectedConnectionPoint: ConnectionPoint | null = null
 
     protected constructor(
         private name: string,
-        connectionManager: ConnectionManager,
+        protected connectionManager: ConnectionManager,
         position: P5.Vector,
-        private type: PointType,
+        circuit: Circuit,
         radius: number = 30,
         modifier: Modifiers<Circle> = new Modifiers<Circle>()
     ) {
@@ -27,6 +28,15 @@ export class CircuitIOMaterial extends Circle implements ConnectionPoint {
                 return true
             })
         )
+        this._parentCircuit = circuit
+    }
+
+    abstract updateValue(value: boolean): void 
+
+    abstract getValue(): boolean
+
+    getCircuit(): Circuit {
+        return this._parentCircuit
     }
 
     getName(): string {
@@ -45,19 +55,11 @@ export class CircuitIOMaterial extends Circle implements ConnectionPoint {
         return this._connectedConnectionPoint
     }
 
-    getPointType(): PointType {
-        return this.type;
-    }
-
-    updateValue(value: boolean): void {
-        this.value = value
-    }
-    
-    getValue(): boolean {
-        return this.value
-    }
-
     getConnectionPointPosition(): P5.Vector {
         return this.realPos
+    }
+
+    getIsParent(): boolean {
+        return false
     }
 }

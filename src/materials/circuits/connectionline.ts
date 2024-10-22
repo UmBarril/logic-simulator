@@ -2,25 +2,17 @@ import P5 from "p5";
 import { Material } from "../interfaces/material";
 import { Modifiers } from "../modifiers";
 import { ConnectionPoint, PointType } from "./connectionpoint";
+import { disabledColor, enabledColor } from "./colors";
 
 export class ConnectionLine extends Material {
-
-    private readonly enabledColor = [255, 0, 0]
-    private readonly disabledColor = [255, 255, 0]
 
     private readonly width = 10
 
     constructor(
-        private output: ConnectionPoint,
-        private input: ConnectionPoint,
+        private io1: ConnectionPoint,
+        private io2: ConnectionPoint,
         modifiers: Modifiers<ConnectionLine> = new Modifiers()
     ) { 
-        if (output.getPointType() != PointType.OUTPUT) {
-            console.log("io1 is not an output")
-        }
-        if (input.getPointType() != PointType.INPUT) {
-            console.log("io2 is not an input")
-        }
         super(
             new P5.Vector(0,0,1),
             modifiers.addOnClick((self, pos) => {
@@ -31,43 +23,65 @@ export class ConnectionLine extends Material {
         )
     }
 
-    getInput(): ConnectionPoint {
-        return this.input
+    getIo1(): ConnectionPoint {
+        return this.io1
     }
 
-    setInput(input: ConnectionPoint) {
-        this.input = input
+    setIo1(io1: ConnectionPoint) {
+        this.io1 = io1
     }
 
-    getOutput(): ConnectionPoint {
-        return this.output
+    getIo2(): ConnectionPoint {
+        return this.io2
     }
 
-    setOutput(output: ConnectionPoint) {
-        this.output = output
+    setIo2(io2: ConnectionPoint) {
+        this.io2 = io2
     }
 
     draw(p: P5): void {
         p.push()
             p.translate(0,0,this.realPos.z)
 
-            if (this.input.getValue()) {
-                p.stroke(p.color(this.enabledColor))
+            if (this.io1.getValue()) {
+                p.stroke(p.color(enabledColor))
             } else {
-                p.stroke(p.color(this.disabledColor))
+                p.stroke(p.color(disabledColor))
             }
             p.strokeWeight(this.width)
 
-            let inputPos = this.input.getConnectionPointPosition()
-            let outputPos = this.output.getConnectionPointPosition()
+            let inputPos = this.io2.getConnectionPointPosition()
+            let outputPos = this.io1.getConnectionPointPosition()
             p.line(inputPos.x, inputPos.y, outputPos.x, outputPos.y)
         p.pop()
     }
 
     isInside(pos: P5.Vector): boolean {
-        let start = this.input.getConnectionPointPosition()
-        let end = this.output.getConnectionPointPosition()
-        return pos.dist(start) + pos.dist(end) <= start.dist(end) + this.width;
+        let start = this.io2.getConnectionPointPosition()
+        let end = this.io1.getConnectionPointPosition()
+        let dist = this.pointToLineDistance(start, end, pos)
+
+        console.log(dist)
+        return dist < this.width / 2
     }
 
+    pointToLineDistance(A: P5.Vector, B: P5.Vector, P: P5.Vector): number {
+        // Vector from A to B
+        let AB = P5.Vector.sub(B, A);
+        
+        // Vector from A to P
+        let AP = P5.Vector.sub(P, A);
+        
+        // Project vector AP onto AB and get the projection length
+        let projectionLength = AP.dot(AB) / AB.mag();
+        
+        // Ensure projectionLength is clamped to the length of the segment
+        projectionLength = Math.max(0, Math.min(projectionLength, AB.mag()));
+        
+        // Find the closest point on the line segment to P
+        let closestPoint = P5.Vector.add(A, AB.setMag(projectionLength));
+        
+        // Return the distance from P to the closest point on the line segment
+        return P5.Vector.dist(P, closestPoint);
+    }
 }

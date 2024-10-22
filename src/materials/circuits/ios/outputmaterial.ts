@@ -1,10 +1,12 @@
 import P5 from "p5";
 import { ConnectionManager } from "../connectionmgr";
-import { ConnectionPoint, PointType } from "../connectionpoint";
 import { IOMaterial } from "./iomaterial";
 import { OutputConnectionPoint } from "../outputconnectionpoint";
+import { disabledColor, enabledColor } from "../colors";
 
 export class OutputMaterial extends IOMaterial implements OutputConnectionPoint {
+
+    discriminator: 'OUTPUT' = 'OUTPUT';
 
     constructor(
         p: P5,
@@ -12,25 +14,23 @@ export class OutputMaterial extends IOMaterial implements OutputConnectionPoint 
         name: string,
         connectionManager: ConnectionManager,
     ) {
-        const buttonClickDisabled = false
-        super(p, name, pos, connectionManager, PointType.OUTPUT, buttonClickDisabled)
+        super(p, name, pos, connectionManager, (_) => { return true })
+
+        this.getCircuit().addOutputObserver(name, (value) => {
+            if (value){
+                this.setButtonColor(enabledColor)
+            } else {  
+                this.setButtonColor(disabledColor)
+            }
+        })
     }
 
-    /**
-     * Atualiza o valor e atualiza o input conectado a ele.
-     * @param value 
-     */
-    override updateValue(value: boolean) {
-        super.updateValue(value)
-        this.getConnectedConnectionPoint()?.updateValue(value)
+    updateValue(value: boolean): void {
+        throw new Error("Method not implemented.");
     }
 
-    override connect(io: ConnectionPoint) {
-        if (io.getPointType() == PointType.INPUT) {
-            super.connect(io)
-            this.getConnectedConnectionPoint()!.updateValue(this.getValue())
-        } else {
-            throw new Error("Method not implemented.");
-        }
+    getValue(): boolean {
+       return this.getCircuit().getOutputValue(this.getName()) 
     }
+
 }
