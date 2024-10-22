@@ -7,6 +7,8 @@ import { UnfinishedConnectionLine } from "./unfinishedline";
 import { isOutputConnectionPoint as isOutput, OutputConnectionPoint } from "./outputconnectionpoint";
 import { EditableCircuit } from "../../logic/editablecircuit";
 import { InputConnectionPoint, isInputConnectionPoint as isInput } from "./inputconnectionpoint";
+import { Modifiers } from "../modifiers";
+import { getMousePos } from "../../util/util";
 
 /**
  * ConnectionManager é responsável por gerenciar as conexões 
@@ -27,9 +29,15 @@ export class ConnectionManager extends Material {
 
     constructor(
         // o circuito que esse ConnectionManager está editando nesse momento
+        p: P5,
         private circuit: EditableCircuit
     ) {
-        super(new P5.Vector)
+        super(new P5.Vector, new Modifiers<ConnectionManager>().addOnClick(() => {
+            this.connections.forEach((c) => {
+                c.mouseClicked(p, getMousePos(p))
+            })
+            return true
+        }))
     }
 
     getCircuit(): EditableCircuit {
@@ -236,6 +244,6 @@ export class ConnectionManager extends Material {
 
     // isIside não faz sentido para o ConnectionManager
     override isInside(pos: Vector): boolean {
-        return false
+        return true
     }
 }

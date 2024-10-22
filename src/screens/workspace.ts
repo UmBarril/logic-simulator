@@ -5,6 +5,7 @@ import { Circuit } from "../logic/circuit";
 import { CircuitMaterial } from "../materials/circuits/circuitmaterial";
 import { InputMaterial } from "../materials/circuits/ios/inputmaterial";
 import { OutputMaterial } from "../materials/circuits/ios/outputmaterial";
+import { randomPos } from "../util/util";
 
 export class Workspace extends MaterialGroup {
 
@@ -17,6 +18,7 @@ export class Workspace extends MaterialGroup {
     ) { 
         super(new P5.Vector(0, 0)) 
         this.offset = new P5.Vector(0, 0)
+        // this.addChild(_connectionManager) // TODO: POR ALGUMA RAZAO ELE PARA DE FUNCIONAR SE EU FIZER ISSO, DESCOBRIR PQ 
     }
 
     public get connectionManager() {
@@ -37,7 +39,7 @@ export class Workspace extends MaterialGroup {
             throw new Error("Input already exists")
         }
         this.connectionManager.getCircuit().addOutput(name)
-        let o = new OutputMaterial(p, new P5.Vector(0, 0), name, this.connectionManager)
+        let o = new OutputMaterial(p, randomPos(p), name, this.connectionManager)
 
         this.addChild(o)
     }
@@ -48,14 +50,14 @@ export class Workspace extends MaterialGroup {
             throw new Error("Input already exists")
         }
         this.connectionManager.getCircuit().addInput(name)
-        let i = new InputMaterial(p, new P5.Vector(0, 0), name, this.connectionManager)
+        let i = new InputMaterial(p, randomPos(p), name, this.connectionManager)
 
         this.addChild(i)
     }
 
     addGate(p: P5, circuit: Circuit) {
         this.verifyCircuitExists()
-        let cm = new CircuitMaterial(p, new P5.Vector(0,0), this.connectionManager, circuit)
+        let cm = new CircuitMaterial(p, randomPos(p), this.connectionManager, circuit)
 
         this.addChild(cm)
     }

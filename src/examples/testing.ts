@@ -16,7 +16,7 @@ export class TestingWorkspace extends Workspace {
         p: P5,
     ) {
         let circuit = new EditableCircuit()
-        let connectionManager = new ConnectionManager(circuit)
+        let connectionManager = new ConnectionManager(p, circuit)
         super(connectionManager)
 
         let circle = new Circle(

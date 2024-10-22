@@ -28,24 +28,17 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
     private readonly connectionPointDistance = 30;
     private readonly connectionPointWidth = 20;
     // dragging pad distance from the button
-    private readonly dragPadDistance = 30;
-    private readonly dragPadWidth = 30;
-    private readonly dragPadHeight = 12;
-    private readonly labelDistance = this.dragPadDistance + 40;
+    private readonly labelDistance = 30;
 
     private readonly bridge: Line
     private readonly button: Circle
     private readonly connectionPoint: Rectangle
-    private readonly dragPad: Rectangle
     private readonly label: TextBox
     
     private _connectedConnectionPoint: ConnectionPoint | null = null
 
     private currentDirection: Directions = Directions.UP;
     private isMoving: boolean = false;
-
-    // TODO: implementar uma maneira genérica para isso
-    private onMoving = () => { };
 
     protected constructor(
         p: P5,
@@ -56,12 +49,14 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
     ) {
         super(pos)
 
-        // todo: talvez remover isso, e fazer com que o output se mova ao arrastar a parte do botão
-        this.dragPad = new Rectangle(
-            p.createVector(0, 0), // vai mudar quando mudar a direção
-            p.createVector(this.dragPadWidth, this.dragPadHeight),
-            p.color(255, 255, 255),
-            new Modifiers<Rectangle>()
+        this.button = new Circle(
+            p.createVector(0, 0),
+            this.buttonRad,
+            disabledColor, // essa cor vai ser mudada depois
+            // nao funciona para desativar pois ele apenas detecta quando clica dentro dele
+            // usar connection manager depois para desativar (e ativar tbm talvez)
+            new Modifiers<Circle>()
+                .addOnClick(onButtonClick)
                 .addOnMousePressed((_) => {
                     this.isMoving = true
                     return false
@@ -70,15 +65,6 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
                     this.isMoving = false
                     return false;
                 })
-        )
-
-        this.button = new Circle(
-            p.createVector(0, 0),
-            this.buttonRad,
-            disabledColor, // essa cor vai ser mudada depois
-            // nao funciona para desativar pois ele apenas detecta quando clica dentro dele
-            // usar connection manager depois para desativar (e ativar tbm talvez)
-            new Modifiers<Circle>().addOnClick(onButtonClick)
         )
 
         // Pad de conexão 
@@ -102,14 +88,15 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
             })
         )
 
+        let textSize = 30
         this.label = new TextBox(
             p,
-            p.createVector(0, this.labelDistance /*, -1 */),
+            p.createVector(-(this.name.length * textSize)/ 4, this.labelDistance /*, -1 */),
             name, // mudar
-            // 50,
+            textSize,
         )
         
-        this.addChild(this.dragPad)
+        // this.addChild(this.dragPad)
         this.addChild(this.button)
         this.addChild(this.bridge)
         this.addChild(this.connectionPoint)
@@ -162,29 +149,25 @@ export abstract class IOMaterial extends MaterialGroup implements KeyboardListen
     private updatePositions(p: P5, direction: Directions){
         switch (direction){
             case Directions.UP:
-                this.dragPad.pos =
-                    new P5.Vector(-this.dragPadWidth / 2, this.dragPadDistance)
-                this.dragPad.setDimensions(this.dragPadWidth, this.dragPadHeight)
-
                 this.connectionPoint.pos = 
                     new P5.Vector(-this.buttonRad / 2, - this.connectionPointDistance - this.connectionPointWidth)
                 this.connectionPoint.setDimensions(this.connectionPointWidth, this.connectionPointWidth)
                 break
 
             case Directions.RIGHT:
-                this.dragPad.pos =
-                    new P5.Vector(-this.dragPadDistance - this.dragPadHeight, -this.dragPadWidth / 2)
-                this.dragPad.setDimensions(this.dragPadHeight, this.dragPadWidth)
-
                 this.connectionPoint.pos = 
                     new P5.Vector(-this.buttonRad / 2, - this.connectionPointDistance - this.connectionPointWidth)
                 this.connectionPoint.setDimensions(this.connectionPointWidth, this.connectionPointWidth)
                 break
             case Directions.DOWN:
-                this.currentDirection = Directions.LEFT
+                this.connectionPoint.pos = 
+                    new P5.Vector(-this.buttonRad / 2, this.connectionPointDistance)
+                this.connectionPoint.setDimensions(this.connectionPointWidth, this.connectionPointWidth)
                 break
             case Directions.LEFT:
-                this.currentDirection = Directions.UP
+                this.connectionPoint.pos = 
+                    new P5.Vector(-this.buttonRad / 2 - this.connectionPointWidth, - this.connectionPointDistance - this.connectionPointWidth)
+                this.connectionPoint.setDimensions(this.connectionPointWidth, this.connectionPointWidth)
                 break
         }
     }

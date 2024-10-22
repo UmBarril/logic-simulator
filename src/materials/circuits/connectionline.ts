@@ -56,14 +56,6 @@ export class ConnectionLine extends Material {
         p.pop()
     }
 
-    isInside(pos: P5.Vector): boolean {
-        let start = this.io2.getConnectionPointPosition()
-        let end = this.io1.getConnectionPointPosition()
-        let dist = this.pointToLineDistance(start, end, pos)
-
-        return dist < this.width / 2
-    }
-
     pointToLineDistance(A: P5.Vector, B: P5.Vector, P: P5.Vector): number {
         // Vector from A to B
         let AB = P5.Vector.sub(B, A);
@@ -82,5 +74,14 @@ export class ConnectionLine extends Material {
         
         // Return the distance from P to the closest point on the line segment
         return P5.Vector.dist(P, closestPoint);
+    }
+
+    isInside(pos: P5.Vector): boolean {
+        let start = this.io2.getConnectionPointPosition()
+        let end = this.io1.getConnectionPointPosition()
+        let dist = this.pointToLineDistance(start, end, pos)
+
+        console.log(dist)
+        return dist < this.width / 2
     }
 }
