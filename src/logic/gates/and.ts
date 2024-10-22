@@ -1,4 +1,4 @@
-import { Circuit } from "./circuit";
+import { Circuit } from "../circuit";
 
 export class AndGate extends Circuit {
     constructor() {
@@ -8,9 +8,7 @@ export class AndGate extends Circuit {
         this.addOutput("c");
     }
 
-    // TODO: remover os BANGS ! e tratar os cados de erro
-    public setInputValue(name: string, value: boolean): void {
-        super.setInputValue(name, value);
+    override update(): void {
         this.outputs.get("c")!.updateValue(this.inputs.get("a")!.getValue() && this.inputs.get("b")!.getValue());
     }
 }

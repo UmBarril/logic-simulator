@@ -21,20 +21,21 @@ export class ConnectionManager extends Material {
 
     private unfinishedConnectionLine: UnfinishedConnectionLine | null = null
 
-    private outputs = new Map<OutputConnectionPoint, ConnectionLine>() 
-    private inputs = new Map<InputConnectionPoint, ConnectionLine>() 
+    private connections: ConnectionLine[] = []
+    private outputs = new Map<OutputConnectionPoint, ConnectionLine>()
+    private inputs = new Map<InputConnectionPoint, ConnectionLine>()
 
     constructor(
         // o circuito que esse ConnectionManager está editando nesse momento
-        private circuit: EditableCircuit 
-    ) { 
+        private circuit: EditableCircuit
+    ) {
         super(new P5.Vector)
     }
 
     getCircuit(): EditableCircuit {
         return this.circuit
     }
-    
+
     /**
      * Seleciona um IO.
      * mostrar visualmente que o IO foi selecionado (talvez muandar uma notificacao) @todo
@@ -57,7 +58,7 @@ export class ConnectionManager extends Material {
         if (this.selectedIO.getCircuit() == io.getCircuit()) {
             // não permitir conectar um input a outro input do mesmo circuito
             // talvez isso possa ser permitido no futuro, mas por enquanto não
-            return 
+            return
         }
 
         let selectedIsParent = this.selectedIO.getIsParent()
@@ -66,19 +67,20 @@ export class ConnectionManager extends Material {
         let connected = false
         if (selectedIsParent && ioIsParent) {
             connected = this.parent2(this.selectedIO, io)
-        } 
+        }
         else if (selectedIsParent) {
             connected = this.parent1(this.selectedIO, io)
         }
         else if (ioIsParent) {
             connected = this.parent1(io, this.selectedIO)
-        } 
-        else  {
+        }
+        else {
             connected = this.parent0(this.selectedIO, io)
         }
         if (!connected) {
-            this.unselect()
+            return
         }
+        this.unselect()
     }
 
     // nenhum é conexão do circuito pai (this.circuit)
@@ -86,13 +88,14 @@ export class ConnectionManager extends Material {
     private parent0(a: ConnectionPoint, b: ConnectionPoint): boolean {
         if (isOutput(a)) {
             if (isOutput(b)) {
-                return false 
+                return false
             } else if (isInput(b)) {
                 let line = new ConnectionLine(a, b)
                 this.outputs.set(a, line)
                 this.inputs.set(b, line)
+                this.connections.push(line)
 
-                this.circuit.connectOuter(a.getName(), b.getName(), this.circuit)
+                a.getCircuit().connectOuter(a.getName(), b.getName(), b.getCircuit())
                 return true
             }
         } else if (isInput(a)) {
@@ -100,9 +103,10 @@ export class ConnectionManager extends Material {
                 let line = new ConnectionLine(b, a)
                 this.outputs.set(b, line)
                 this.inputs.set(a, line)
+                this.connections.push(line)
 
-                this.circuit.connectOuter(b.getName(), a.getName(), this.circuit)
-                return true 
+                b.getCircuit().connectOuter(b.getName(), a.getName(), a.getCircuit())
+                return true
             } else if (isInput(b)) {
                 return false
             }
@@ -113,19 +117,14 @@ export class ConnectionManager extends Material {
     // a é conexão do circuito pai (this.circuit)
     // se retornar false, não conectou. se true conectou
     private parent1(a: ConnectionPoint, b: ConnectionPoint) {
-        console.log("conectou")
-        console.log(isOutput(a))
-        console.log(isInput(a))
-        console.log(a)
-        // @ts-ignore
-        console.log(a.discriminator)
         if (isOutput(a)) {
             if (isOutput(b)) {
                 let line = new ConnectionLine(b, a)
                 this.outputs.set(b, line)
                 this.outputs.set(a, line)
+                this.connections.push(line)
 
-                this.circuit.connectOuter(b.getName(), a.getName(), this.circuit)
+                b.getCircuit().connectOuter(b.getName(), a.getName(), this.circuit)
                 return true
             } else if (isInput(b)) {
                 return false
@@ -134,12 +133,12 @@ export class ConnectionManager extends Material {
             if (isOutput(b)) {
                 return false
             } else if (isInput(b)) {
-                console.log("conectou")
                 let line = new ConnectionLine(a, b)
                 this.inputs.set(a, line)
                 this.inputs.set(b, line)
+                this.connections.push(line)
 
-                this.circuit.connectInner(a.getName(), b.getName(), this.circuit)
+                this.circuit.connectInner(a.getName(), b.getName(), b.getCircuit())
                 return true
             }
         }
@@ -224,13 +223,15 @@ export class ConnectionManager extends Material {
     // }
 
     // não sei se gosto do connection manager desenhando as linhas assim, as tudo bem
-    override draw(p: P5): void { 
+    override draw(p: P5): void {
         // Desenhando as linhas manualmente em vez de colorcar elas como filhos.
         // Não gosto muito de fazer isso pois estou repetindo código.
         // Mas dessa maneira tenho mais controle das linhas nessa classe.
         // TODO: melhorar
         this.unfinishedConnectionLine?.draw(p)
-        this.outputs.forEach(line => line.draw(p))
+        this.connections.forEach(line => {
+            line.draw(p)
+        })
     }
 
     // isIside não faz sentido para o ConnectionManager

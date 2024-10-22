@@ -26,10 +26,10 @@ export class ScreenManager  {
 
     draw(p: P5) {
         if (!this.isCurrentScreenValid()) {
-            console.log("ScreenManager: currentScreen is not valid")
+            // console.log("ScreenManager: currentScreen is not valid")
             return;
         }
-        console.log("ScreenManager: draw")
+        // console.log("ScreenManager: draw")
         this.currentScreen?.draw(p)
     }
 

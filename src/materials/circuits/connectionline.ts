@@ -61,7 +61,6 @@ export class ConnectionLine extends Material {
         let end = this.io1.getConnectionPointPosition()
         let dist = this.pointToLineDistance(start, end, pos)
 
-        console.log(dist)
         return dist < this.width / 2
     }
 

@@ -16,10 +16,8 @@ export abstract class IOInterface {
 
     public updateValue(value: boolean): void {
         this._value = value;
-        this.observers.forEach(observer => observer(value));
-        if (this.connectedIo) {
-            this.connectedIo.updateValue(value);
-        }
+        this.notifyObservers();
+        this.updateConnectedIo();
     }
 
     public disconnect(): void {
@@ -30,6 +28,16 @@ export abstract class IOInterface {
         this.observers.push(observer);
     }
 
+    protected updateConnectedIo(): void {
+        if (this.connectedIo != null) {
+            this.connectedIo.updateValue(this._value);
+        }
+    }
+
+    private notifyObservers(): void {
+        this.observers.forEach(observer => observer(this._value));
+    }
+
     abstract connectToOuter(io: IOInterface): void
     abstract connectToInner(io: IOInterface): void
 }
@@ -38,6 +46,7 @@ export class Output extends IOInterface {
 
     public connectToOuter(io: IOInterface): void {
         this.connectedIo = io;
+        this.updateConnectedIo()
     }
 
     public connectToInner(io: IOInterface): void { 
@@ -54,6 +63,7 @@ export class Input extends IOInterface {
 
     public connectToInner(io: IOInterface): void {
         this.connectedIo = io;
+        this.updateConnectedIo()
     }
 
 }

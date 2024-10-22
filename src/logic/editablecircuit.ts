@@ -22,4 +22,5 @@ export class EditableCircuit extends Circuit {
         super.addOutput(name);
     }
 
+    override update(): void { /* não faz nada aqui */ } 
 }

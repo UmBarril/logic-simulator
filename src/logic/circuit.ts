@@ -15,8 +15,11 @@ export abstract class Circuit {
         this.name = name;
     }
 
+    abstract update(): void
+
     public connectOuter(from: string, to: string, circuit: Circuit): void {
-        this.outputs.get(from)!.connectToOuter(circuit.inputs.get(to)!);
+        let io: IOInterface  = this.getIOFromCircuit(to, circuit);
+        this.outputs.get(from)!.connectToOuter(io);
     }
 
     public disconnectOuter(ioName: string): void {
@@ -28,6 +31,7 @@ export abstract class Circuit {
 
     public setInputValue(name: string, value: boolean): void {
         this.inputs.get(name)!.updateValue(value);
+        this.update();
     }
 
     /**
@@ -79,25 +83,39 @@ export abstract class Circuit {
         return this.name;
     }
 
+    protected getIOFromCircuit(name: string, circuit: Circuit): IOInterface {
+        let io: IOInterface | undefined = circuit.inputs.get(name);
+        if (io === undefined) {
+            io = circuit.outputs.get(name);
+            if (io === undefined) {
+                throw new Error(`IOInterface ${name} not found in circuit ${circuit.getName()}`);
+            }
+        }
+        return io;
+    }
+
     protected setName(name: string): void {
         this.name = name;
     }
 
     // TODO: remover esses BANGS ! e tratar os casos de erro
     protected connectInner(from: string, to: string, circuit: Circuit): void {
-        let io: IOInterface | undefined = circuit.inputs.get(to);
-        if (io === undefined) {
-            io = circuit.outputs.get(to);
-        }
-        this.inputs.get(from)!.connectToInner(io!);
+        let io: IOInterface  = this.getIOFromCircuit(to, circuit);
+        this.inputs.get(from)!.connectToInner(io);
     }
 
     protected addInput(name: string): void {
-        this.inputs.set(name, new Input(this));
+        let input = new Input(this)
+        input.addObserver((_) => { this.update() });
+
+        this.inputs.set(name, input);
     }
 
     protected addOutput(name: string): void {
-        this.outputs.set(name, new Output(this));
+        let output = new Output(this);
+        // output.addObserver((_) => { this.update() });
+
+        this.outputs.set(name, output);
     }
 
     public toString(): string {

@@ -28,4 +28,5 @@ export class CircuitInputMaterial extends CircuitIOMaterial implements InputConn
     getValue(): boolean {
        return this.getCircuit().getInputValue(this.getName()) 
     }
+
 }
