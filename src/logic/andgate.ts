@@ -2,7 +2,7 @@ import { Circuit } from "./circuit";
 
 export class AndGate extends Circuit {
     constructor() {
-        super("and");
+        super("And");
         this.addInput("a");
         this.addInput("b");
         this.addOutput("c");
