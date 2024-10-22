@@ -25,6 +25,7 @@ export class TextBox extends Material {
         this.pi.position(this.realPos.x + p.width / 2, this.realPos.y + p.height / 2)
         this.pi.html(this._title)
         this.pi.style("font-size", this.pxTextSize + "px")
+        this.pi.style("user-select", "none")
     }
 
     draw(p: P5): void {
