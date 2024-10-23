@@ -4,13 +4,13 @@ import { EditableCircuit } from "../logic/editablecircuit"
 import { ConnectionManager } from "../materials/circuits/connectionmgr"
 import { AndGate } from "../logic/gates/and"
 import { NotGate } from "../logic/gates/not"
-import { Toolbar } from "../materials/ui/toolbar"
+import { OrGate } from "../logic/gates/or"
 
 export class WTestingWorkspace extends Workspace {
 
     constructor(p: P5) {
         let circuit = new EditableCircuit()
-        let connectionManager = new ConnectionManager(circuit)
+        let connectionManager = new ConnectionManager(p, circuit)
 
         super(connectionManager)
 
@@ -19,6 +19,7 @@ export class WTestingWorkspace extends Workspace {
         this.addInput(p, "input2")
         this.addGate(p, new AndGate())
         this.addGate(p, new NotGate())
+        this.addGate(p, new OrGate())
     }
 
 }
